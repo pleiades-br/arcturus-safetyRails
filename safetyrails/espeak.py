@@ -1,6 +1,12 @@
+"""
+    Module that provide interface with LibEspeak
+"""
 import subprocess
 
-class ESpeak(object):
+class ESpeak():
+    """
+        Espeak class 
+    """
     def __init__(self,
                  volume     = 100,
                  device     = None,

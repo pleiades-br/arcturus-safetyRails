@@ -1,4 +1,6 @@
-import sys
+"""
+    setup tools
+"""
 from setuptools import setup
 setup(
     name = "safetyRails",

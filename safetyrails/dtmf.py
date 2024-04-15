@@ -1,7 +1,9 @@
+""" 
+    Module providing functions to generate dtmf audio from a given string
+"""
 import wave
-import numpy as np
-import argparse
 import math
+import numpy as np
 
 dtmf_frequencies = {
     '1': (697, 1209), '2': (697, 1336), '3': (697, 1477),
@@ -12,7 +14,10 @@ dtmf_frequencies = {
     'D': (941, 1633), ',': (0, 0)
 }
 
-class DTMF(object):
+class DTMF():
+    """
+        Class representing the dtmf audio object to be created
+    """
     def __init__(self,  duration=500, sample_rate=8000, silence_duration=25, pcm8=False) -> None:
         self._duration = duration
         self._sample_rate = sample_rate
@@ -20,28 +25,28 @@ class DTMF(object):
         self._pcm8 = pcm8
 
     @property
-    def duration(self):
+    def duration(self) -> int:
         return self._duration
     @duration.setter
     def duration(self, v):
         self._duration = v
 
     @property
-    def sample_rate(self):
+    def sample_rate(self) -> int:
         return self._sample_rate
     @sample_rate.setter
     def sample_rate(self, v):
         self._sample_rate = v
 
     @property
-    def silence_duration(self):
+    def silence_duration(self) -> int:
         return self._silence_duration
     @silence_duration.setter
     def silence_duration(self, v):
         self._silence_duration = v
 
     @property
-    def pcm8(self):
+    def pcm8(self) -> int:
         return self._pcm8
     @pcm8.setter
     def pcm8(self, v):

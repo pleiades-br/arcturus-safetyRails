@@ -1,4 +1,4 @@
-import espeak 
+import espeak
 import dtmf
 from periphery import GPIO
 import subprocess
