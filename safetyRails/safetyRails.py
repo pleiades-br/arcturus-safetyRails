@@ -1,23 +1,47 @@
 import ESpeak 
 import DTMF
-from gpiozero import DigitalInputDevice
+from periphery import GPIO
 import subprocess
-import simpleaudio as sa
+import pyaudio
+import wave
 import argparse
 import time
 
 def play(file):
-    wave_obj = sa.WaveObject.from_wave_file(file)
-    play_obj = wave_obj.play()
-    play_obj.wait_done()
+    CHUNK = 1024
 
-def gpio_loop(gpio_device):
+    # Open the audio file
+    wf = wave.open(file, 'rb')
+
+    # Initialize PyAudio
+    p = pyaudio.PyAudio()
+
+    # Open a stream
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+
+    # Read data
+    data = wf.readframes(CHUNK)
+
+    # Play the audio
+    while data:
+        stream.write(data)
+        data = wf.readframes(CHUNK)
+
+    # Close the stream and PyAudio
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+def gpio_loop(gpio):
     try:
         # Initial state
-        previous_state = gpio_device.value
+        previous_state = gpio.read()
         while True:
             # Read current state
-            current_state = gpio_device.value
+            current_state = gpio.read()
 
             # Check if state has changed
             if current_state != previous_state:
@@ -39,10 +63,10 @@ def main():
     gpio_pin = 1
 
     # Create DigitalInputDevice object for the GPIO pin
-    gpio_device = DigitalInputDevice(gpio_pin)
+    gpio = GPIO(gpio_pin, "in")
 
-    gpio_loop(gpio_device)
-    gpio_device.close()
+    gpio_loop(gpio)
+    gpio.close()
 
 if __name__ == "__main__":
     main()
