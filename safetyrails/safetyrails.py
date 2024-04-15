@@ -67,6 +67,7 @@ def main():
 
     gpio_loop(gpio)
     gpio.close()
+    return 0
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
