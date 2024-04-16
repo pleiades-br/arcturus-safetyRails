@@ -50,7 +50,7 @@ def gpio_loop(gpio):
                 previous_state = current_state
 
             # Wait before checking again
-            time.sleep(0.1)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         pass  # KeyboardInterrupt will be caught, allowing proper cleanup
@@ -80,4 +80,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
