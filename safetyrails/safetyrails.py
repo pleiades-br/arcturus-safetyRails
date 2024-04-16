@@ -62,21 +62,22 @@ def main():
     # GPIO pin to monitor
     gpio_pin = 1
 
-    chip = gpiod.chip("/dev/gpiochip0")
-
     # Create DigitalInputDevice object for the GPIO pin
-    trail = chip.get_line(gpio_pin)
+    gpio = gpiod.request_lines(
+        "/dev/gpiochip0",
+        consumer="Trail",
+        config= {
+            gpio_pin: gpiod.LineSettings (
+                direction=gpiod.line.Direction.INPUT
+            )
+        }
+    )
 
-    config = gpiod.line_request() 
-    config.consumer = "Trail"
-    config.request_type = gpiod.line_request.DIRECTION_INPUT
+    gpio_loop(gpio)
+    gpio.release()
 
-    trail.request(config)
-
-    gpio_loop(trail)
-    trail.release()
-    chip.close()
     return 0
 
 if __name__ == '__main__':
     main()
+    
