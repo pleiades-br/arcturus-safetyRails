@@ -35,13 +35,13 @@ def play(file):
     stream.close()
     p.terminate()
 
-def gpio_loop(gpio):
+def gpio_loop(gpio, pin_number):
     try:
         # Initial state
-        previous_state = gpio.get_value()
+        previous_state = gpio.get_value(pin_number)
         while True:
             # Read current state
-            current_state = gpio.get_value()
+            current_state = gpio.get_value(pin_number)
 
             # Check if state has changed
             if current_state != previous_state:
@@ -59,21 +59,29 @@ def main():
     '''
         Argument parsing with argparse and main job
     '''
+    #GPIO pin to enable
+    gpio_pin_enable = 5
+
     # GPIO pin to monitor
-    gpio_pin = 1
+    gpio_pin_monitor = 1
 
     # Create DigitalInputDevice object for the GPIO pin
+    
     gpio = gpiod.request_lines(
         "/dev/gpiochip0",
         consumer="Trail",
         config= {
-            gpio_pin: gpiod.LineSettings (
+            gpio_pin_monitor: gpiod.LineSettings (
                 direction=gpiod.line.Direction.INPUT
+            ),
+            gpio_pin_enable: gpiod.LineSettings (
+                direction=gpiod.line.Direction.OUTPUT,
+                output_value=gpiod.line.Value.ACTIVE
             )
         }
     )
 
-    gpio_loop(gpio)
+    gpio_loop(gpio, gpio_pin_monitor)
     gpio.release()
 
     return 0
