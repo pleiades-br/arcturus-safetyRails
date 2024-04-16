@@ -1,6 +1,6 @@
 import espeak
 import dtmf
-from periphery import GPIO
+import gpiod
 import subprocess
 import pyaudio
 import wave
@@ -38,10 +38,10 @@ def play(file):
 def gpio_loop(gpio):
     try:
         # Initial state
-        previous_state = gpio.read()
+        previous_state = gpio.get_value()
         while True:
             # Read current state
-            current_state = gpio.read()
+            current_state = gpio.get_value()
 
             # Check if state has changed
             if current_state != previous_state:
@@ -62,11 +62,20 @@ def main():
     # GPIO pin to monitor
     gpio_pin = 1
 
-    # Create DigitalInputDevice object for the GPIO pin
-    gpio = GPIO(gpio_pin, "in")
+    chip = gpiod.chip("/dev/gpiochip0")
 
-    gpio_loop(gpio)
-    gpio.close()
+    # Create DigitalInputDevice object for the GPIO pin
+    trail = chip.get_line(gpio_pin)
+
+    config = gpiod.line_request() 
+    config.consumer = "Trail"
+    config.request_type = gpiod.line_request.DIRECTION_INPUT
+
+    trail.request(config)
+
+    gpio_loop(trail)
+    trail.release()
+    chip.close()
     return 0
 
 if __name__ == '__main__':
