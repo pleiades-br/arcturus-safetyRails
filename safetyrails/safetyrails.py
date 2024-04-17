@@ -5,7 +5,8 @@ import subprocess
 import pyaudio
 import wave
 import argparse
-import time
+from datetime import datetime, timedelta
+from gpiod.line import Edge, Direction, Value, Bias
 
 def play(file):
     CHUNK = 1024
@@ -35,26 +36,6 @@ def play(file):
     stream.close()
     p.terminate()
 
-def gpio_loop(gpio, pin_number):
-    try:
-        # Initial state
-        previous_state = gpio.get_value(pin_number)
-        while True:
-            # Read current state
-            current_state = gpio.get_value(pin_number)
-
-            # Check if state has changed
-            if current_state != previous_state:
-                print("Previous state: %d \nCurrent State %d", previous_state, current_state)
-                # Update previous state
-                previous_state = current_state
-
-            # Wait before checking again
-            time.sleep(1)
-
-    except KeyboardInterrupt:
-        pass  # KeyboardInterrupt will be caught, allowing proper cleanup
-
 def main():
     '''
         Argument parsing with argparse and main job
@@ -65,26 +46,29 @@ def main():
     # GPIO pin to monitor
     gpio_pin_monitor = 1
 
-    # Create DigitalInputDevice object for the GPIO pin
-    
-    gpio = gpiod.request_lines(
-        "/dev/gpiochip0",
-        consumer="Trail",
-        config= {
-            gpio_pin_monitor: gpiod.LineSettings (
-                direction=gpiod.line.Direction.INPUT
-            ),
-            gpio_pin_enable: gpiod.LineSettings (
-                direction=gpiod.line.Direction.OUTPUT,
-                output_value=gpiod.line.Value.ACTIVE
-            )
-        }
-    )
 
-    gpio_loop(gpio, gpio_pin_monitor)
-    gpio.release()
-
-    return 0
+    # Request lines to configure and monitoring
+    with gpiod.request_lines(
+            path="/dev/gpiochip0",
+            consumer='Safety-Trail',
+            config={
+                gpio_pin_monitor:
+                    gpiod.LineSettings(
+                        edge_detection=Edge.RISING,
+                        bias=Bias.PULL_DOWN,
+                        debounce_period=timedelta(seconds=0.5)
+                ),
+                gpio_pin_enable: 
+                    gpiod.LineSettings (
+                        direction=Direction.OUTPUT,
+                        output_value=Value.ACTIVE
+                )
+            }
+        ) as line:
+            while True:
+                # Block until rising edge event happens
+                if line.read_edge_events():
+                     print("State change %d", line.get_value(gpio_pin_monitor))
 
 if __name__ == '__main__':
     main()
