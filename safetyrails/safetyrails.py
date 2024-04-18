@@ -54,6 +54,7 @@ def main():
                 gpio_pin_monitor:
                     gpiod.LineSettings(
                         direction=Direction.INPUT,
+                        active_low=True,
                         edge_detection=Edge.BOTH,
                         bias=Bias.PULL_UP,
                         debounce_period=timedelta(seconds=0.5)
