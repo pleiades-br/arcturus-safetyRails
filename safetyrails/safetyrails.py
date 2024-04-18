@@ -50,10 +50,11 @@ def main():
     # Request lines to configure and monitoring
     with gpiod.request_lines(
             path="/dev/gpiochip0",
-            consumer='Safety-Trail',
+            consumer='Safety-Rail',
             config={
                 gpio_pin_monitor:
                     gpiod.LineSettings(
+                         direction=Direction.INPUT,
                         edge_detection=Edge.RISING,
                         bias=Bias.PULL_DOWN,
                         debounce_period=timedelta(seconds=0.5)
