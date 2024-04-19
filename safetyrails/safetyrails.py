@@ -44,7 +44,7 @@ def main():
     gpio_pin_enable = 5
 
     # GPIO pin to monitor
-    gpio_pin_monitor = 1
+    gpio_pin_monitor = 4
 
     # Request lines to configure and monitoring
     with gpiod.request_lines(
@@ -54,9 +54,8 @@ def main():
                 gpio_pin_monitor:
                     gpiod.LineSettings(
                         direction=Direction.INPUT,
-                        active_low=True,
                         edge_detection=Edge.BOTH,
-                        bias=Bias.PULL_UP,
+                        bias=Bias.PULL_DOWN,
                         debounce_period=timedelta(seconds=0.5)
                 ),
                 gpio_pin_enable: 
