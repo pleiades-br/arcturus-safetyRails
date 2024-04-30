@@ -60,6 +60,7 @@ def gpio_loop(gpio_pin_output, gpio_pin_monitor):
                 # Block until rising edge event happens
                 if line.read_edge_events():
                      if (line.get_value(gpio_pin_monitor) == Value.INACTIVE):
+                        print("SafteyRails detect Alarm on rail sensor")
                         play("dtmf_pre.wav")
                         play("text_output.wav")
                         play("dtmf_pos.wav")
@@ -74,10 +75,10 @@ def main():
     parser.add_argument('dtmf_pre', type=str, help='Sequence of digits to generate preamble DTMF tones.')
     parser.add_argument('text', type=str, help='String used to transform to audio')
     parser.add_argument('dtmf_pos', type=str, help='Sequence of digits to generate preamble DTMF tones.')
-    parser.add_argument('--text-pitch', type=int, default=32, help=' Pitch adjustment, 0 to 99, default is 32')
-    parser.add_argument('--text-gap', type=int, default=-1, help=' Word gap. Pause between words, units of 10mS at the default speed')
+    parser.add_argument('--text-pitch', type=int, default=30, help=' Pitch adjustment, 0 to 99, default is 32')
+    parser.add_argument('--text-gap', type=int, default=1, help=' Word gap. Pause between words, units of 10mS at the default speed')
     parser.add_argument('--text-capitals', type=int, default=1, help='Indicate capital letters with: 1=sound, 2=the word "capitals"')
-    parser.add_argument('--text-speed', type=int, default=175, help=' Speed in approximate words per minute. The default is 175')
+    parser.add_argument('--text-speed', type=int, default=125, help=' Speed in approximate words per minute. The default is 175')
     parser.add_argument('--text-volume', type=int, default=100, help='Volume, 0 to 200, default is 100')
     parser.add_argument('--text-male-voice', action='store_true', help='Use a male voice instead a female voice')
     parser.add_argument('--dtmf-duration', type=int, default=500, help='Duration of each tone in milliseconds (default: 500).')
