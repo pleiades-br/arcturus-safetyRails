@@ -1,7 +1,7 @@
 from espeak import ESpeak
 from dtmf import DTMF
+import os
 import gpiod
-import subprocess
 import pyaudio
 import wave
 import argparse
@@ -27,14 +27,21 @@ def play(file):
     data = wf.readframes(CHUNK)
 
     # Play the audio
-    while data:
-        stream.write(data)
-        data = wf.readframes(CHUNK)
+    try:
+        while data:
+            stream.write(data)
+            data = wf.readframes(CHUNK)
+    except Exception as error:
+        print(f'Not possible to play filename {file}. Error {type(error).__name__} - {error}')
 
     # Close the stream and PyAudio
     stream.stop_stream()
     stream.close()
     p.terminate()
+
+def play_with_aplay(filename):
+    cmd = f'aplay {filename}'
+    os.system(cmd)
 
 def gpio_loop(gpio_chip, gpio_pin_monitor):
     # Request lines to configure and monitoring
@@ -58,9 +65,9 @@ def gpio_loop(gpio_chip, gpio_pin_monitor):
                     if line.read_edge_events():
                         if (line.get_value(gpio_pin_monitor) == Value.INACTIVE):
                             print("SafteyRails detect Alarm on rail sensor")
-                            play("dtmf_pre.wav")
-                            play("text_output.wav")
-                            play("dtmf_pos.wav")
+                            play_with_aplay("dtmf_pre.wav")
+                            play_with_aplay("text_output.wav")
+                            play_with_aplay("dtmf_pos.wav")
     except Exception as error:
         print(f'Not possible to initialize gpio num {gpio_pin_monitor} monitoring in {gpio_chip} \
               Error {type(error).__name__} - {error}')
