@@ -36,36 +36,63 @@ def play(file):
     stream.close()
     p.terminate()
 
-def gpio_loop(gpio_pin_output, gpio_pin_monitor):
+def gpio_loop(gpio_chip, gpio_pin_monitor):
     # Request lines to configure and monitoring
-    with gpiod.request_lines(
-            path="/dev/gpiochip0",
-            consumer='Safety-Rail',
-            config={
-                gpio_pin_monitor:
-                    gpiod.LineSettings(
-                        direction=Direction.INPUT,
-                        edge_detection=Edge.BOTH,
-                        bias=Bias.PULL_DOWN,
-                        debounce_period=timedelta(seconds=0.5)
-                ),
-                gpio_pin_output: 
-                    gpiod.LineSettings (
-                        direction=Direction.OUTPUT,
-                        output_value=Value.ACTIVE
-                )
-            }
-        ) as line:
-            while True:
-                # Block until rising edge event happens
-                if line.read_edge_events():
-                     if (line.get_value(gpio_pin_monitor) == Value.INACTIVE):
-                        print("SafteyRails detect Alarm on rail sensor")
-                        play("dtmf_pre.wav")
-                        play("text_output.wav")
-                        play("dtmf_pos.wav")
+    try:
+        with gpiod.request_lines(
+                path=gpio_chip,
+                consumer='Safety-Rail',
+                config={
+                    gpio_pin_monitor:
+                        gpiod.LineSettings(
+                            direction=Direction.INPUT,
+                            edge_detection=Edge.BOTH,
+                            bias=Bias.PULL_DOWN,
+                            debounce_period=timedelta(seconds=0.5)
+                    )
+                }
+            ) as line:
+                while True:
+                    # Block until rising edge event happens
+                    if line.read_edge_events():
+                        if (line.get_value(gpio_pin_monitor) == Value.INACTIVE):
+                            print("SafteyRails detect Alarm on rail sensor")
+                            play("dtmf_pre.wav")
+                            play("text_output.wav")
+                            play("dtmf_pos.wav")
+    except Exception as error:
+        print(f'Not possible to initialize gpio num {gpio_pin_monitor} monitoring in {gpio_chip} \
+              Error {type(error).__name__} - {error}')
 
 
+
+def gpio_chip_range_checker(arg):
+    MIN_VAL = 0
+    MAX_VAL = 4
+    """ 
+    Type function for argparse - a int within some predefined bounds 
+    """
+    try:
+        value = int(arg)
+    except ValueError:    
+        raise argparse.ArgumentTypeError("Must be a int point number")
+    if value < MIN_VAL or value > MAX_VAL:
+        raise argparse.ArgumentTypeError("Argument must be < " + str(MAX_VAL) + "and > " + str(MIN_VAL))
+    return value
+
+def gpio_num_range_checker(arg):
+    MIN_VAL = 0
+    MAX_VAL = 31
+    """ 
+    Type function for argparse - a int within some predefined bounds 
+    """
+    try:
+        value = int(arg)
+    except ValueError:    
+        raise argparse.ArgumentTypeError("Must be a int point number")
+    if value < MIN_VAL or value > MAX_VAL:
+        raise argparse.ArgumentTypeError("Argument must be < " + str(MAX_VAL) + "and > " + str(MIN_VAL))
+    return value
 
 def main():
     '''
@@ -75,6 +102,8 @@ def main():
     parser.add_argument('dtmf_pre', type=str, help='Sequence of digits to generate preamble DTMF tones.')
     parser.add_argument('text', type=str, help='String used to transform to audio')
     parser.add_argument('dtmf_pos', type=str, help='Sequence of digits to generate preamble DTMF tones.')
+    parser.add_argument('gpiochip', type=gpio_chip_range_checker, help='Gpiochip where the monitored gpio is connected (int value)')
+    parser.add_argument('gpionum', type=gpio_chip_range_checker, help='Gpio number to monitored (int value)')
     parser.add_argument('--text-pitch', type=int, default=30, help=' Pitch adjustment, 0 to 99, default is 32')
     parser.add_argument('--text-gap', type=int, default=1, help=' Word gap. Pause between words, units of 10mS at the default speed')
     parser.add_argument('--text-capitals', type=int, default=1, help='Indicate capital letters with: 1=sound, 2=the word "capitals"')
@@ -100,12 +129,12 @@ def main():
     engine.save_wave_file(args.text,filename="text_output.wav")
 
     #GPIO pin to enable
-    gpio_pin_enable = 5
+    gpio_chip = f'/dev/gpiochip{args.gpiochip}'
 
     # GPIO pin to monitor
-    gpio_pin_monitor = 6
+    gpio_pin_monitor = args.gpionum
 
-    gpio_loop(gpio_pin_enable, gpio_pin_monitor)
+    gpio_loop(gpio_chip, gpio_pin_monitor)
 
 
 if __name__ == '__main__':
