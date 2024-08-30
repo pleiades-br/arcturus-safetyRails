@@ -52,6 +52,7 @@ def gpio_loop(gpio_chip, gpio_pin_monitor):
                     )
                 }
             ) as line:
+                print(f'Starting monitoring chip: {gpio_chip} gpio: {gpio_pin_monitor}...')
                 while True:
                     # Block until rising edge event happens
                     if line.read_edge_events():
