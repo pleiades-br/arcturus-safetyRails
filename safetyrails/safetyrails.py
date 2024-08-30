@@ -103,7 +103,7 @@ def main():
     parser.add_argument('text', type=str, help='String used to transform to audio')
     parser.add_argument('dtmf_pos', type=str, help='Sequence of digits to generate preamble DTMF tones.')
     parser.add_argument('gpiochip', type=gpio_chip_range_checker, help='Gpiochip where the monitored gpio is connected (int value)')
-    parser.add_argument('gpionum', type=gpio_chip_range_checker, help='Gpio number to monitored (int value)')
+    parser.add_argument('gpionum', type=gpio_num_range_checker, help='Gpio number to monitored (int value)')
     parser.add_argument('--text-pitch', type=int, default=30, help=' Pitch adjustment, 0 to 99, default is 32')
     parser.add_argument('--text-gap', type=int, default=1, help=' Word gap. Pause between words, units of 10mS at the default speed')
     parser.add_argument('--text-capitals', type=int, default=1, help='Indicate capital letters with: 1=sound, 2=the word "capitals"')
