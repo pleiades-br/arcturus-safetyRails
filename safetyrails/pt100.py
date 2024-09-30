@@ -1,7 +1,7 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
 
-class PT100():
+class Pt100():
     NAME="""AIN{mux1}_AVSS"""
     RAW_FILE="""in_voltage{mux1}_raw"""
     INPUT_FILE="""in_voltage{mux1}_input"""

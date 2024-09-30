@@ -1,7 +1,7 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
 
-class SHTC3():
+class Shtc3():
     TEMPERATURE_FILE = "temp1_input"
     HUMIDITY_FILE = "humidity1_input"
 
