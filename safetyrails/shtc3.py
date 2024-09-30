@@ -20,8 +20,9 @@ class SHTC3():
                         sensor_name = file.read().strip()
                         if sensor_name == 'shtc3':
                             self.__dirpath = os.path.join(LINUX_SYS_I2C_PATH, dirs)
+                            break
                 except Exception:
-                    pass
+                    continue
 
         if self.__dirpath == "":
             raise FileNotFoundError("Could not find shtc3 sys folder")
