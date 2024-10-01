@@ -47,7 +47,7 @@ class Pac1945():
                     channel["raw_value"] = int(file.read().strip())
 
             except Exception:
-                print(f"Pac1945 could not take data from {channel["name"]}")
+                print(f"Pac1945 could not take data from {channel['name']}")
                 continue
 
     def get_sensor_data(self):

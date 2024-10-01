@@ -66,7 +66,7 @@ class Pt100():
                 with open(channel["input_file"],'r') as file: 
                     channel["input_value"] = int(file.read().strip())
             except Exception:
-                print(f"PT100 could not take data from {channel["name"]}")
+                print(f"PT100 could not take data from {channel['name']}")
                 continue
 
     def get_sensor_data(self):

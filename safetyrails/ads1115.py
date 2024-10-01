@@ -58,7 +58,7 @@ class Ads1115():
                     channel["raw_value"] = int(file.read().strip())
 
             except Exception:
-                print(f"Ads1115 could not take data from {channel["name"]}")
+                print(f"Ads1115 could not take data from {channel['name']}")
                 continue
 
     def get_sensor_data(self):
