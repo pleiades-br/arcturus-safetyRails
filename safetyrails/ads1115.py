@@ -29,7 +29,7 @@ class Ads1115():
                     continue
 
         if self.__dirpath == "":
-            raise FileNotFoundError("Could not find ti-ads122c04 sys folder")
+            raise FileNotFoundError("Could not find ads1115 sys folder")
 
     def __create_channel_list(self, config_list: list):
         for entry in config_list:
