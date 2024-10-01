@@ -1,5 +1,5 @@
 import os
-from gpiod
+import gpiod
 from gpiod.line import Edge, Direction, Value, Bias
 
 class ArcturusGpios():
