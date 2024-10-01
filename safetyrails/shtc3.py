@@ -2,8 +2,8 @@ import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
 
 class Shtc3():
-    TEMPERATURE_FILE = "/hwmon/hwmon0/temp1_input"
-    HUMIDITY_FILE = "/hwmon/hwmon0/humidity1_input"
+    TEMPERATURE_FILE = "hwmon/hwmon0/temp1_input"
+    HUMIDITY_FILE = "hwmon/hwmon0/humidity1_input"
 
     def __init__(self) -> None:
         self.__temperature: float = 0

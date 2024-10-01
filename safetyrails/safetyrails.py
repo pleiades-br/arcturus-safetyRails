@@ -47,6 +47,8 @@ def main():
     sensor = Sensors()
     temp, humi = sensor.shtc3.get_sensor_data()
     print(f'Sensor data {temp}:{humi}%')
+    data = sensor.pt100.get_sensor_data()
+    print(f'Pt100 data {data}')
 
 if __name__ == '__main__':
     main()
