@@ -22,7 +22,7 @@ class Pt100():
                 try:
                     with open(sensor_name_file, 'r') as file:
                         sensor_name = file.read().strip()
-                        if sensor_name == 'ti-ads122c04':
+                        if sensor_name == 'ads122c04':
                             for entry in os.listdir(os.path.join(LINUX_SYS_I2C_PATH, dirs)):
                                 if entry.startswith('iio'):
                                     self.__dirpath = os.path.join(LINUX_SYS_I2C_PATH, dirs, entry)
