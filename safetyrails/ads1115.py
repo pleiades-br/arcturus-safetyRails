@@ -5,7 +5,7 @@ class Ads1115():
     NAME="""AIN{mux1}"""
     RAW_FILE="""in_voltage{mux1}_raw"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
-    MUX_RAW_FILE="""in_voltage{mux1}_in_voltage{mux2}_raw"""
+    MUX_RAW_FILE="""in_voltage{mux1}-voltage{mux2}_raw"""
 
     def __init__(self, config_list: list) -> None:
         self.__channels: list = []

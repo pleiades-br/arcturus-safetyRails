@@ -6,8 +6,8 @@ class Pt100():
     RAW_FILE="""in_voltage{mux1}_raw"""
     INPUT_FILE="""in_voltage{mux1}_input"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
-    MUX_RAW_FILE="""in_voltage{mux1}_in_voltage{mux2}_raw"""
-    MUX_INPUT_FILE="""in_voltage{mux1}_in_voltage{mux2}_input"""
+    MUX_RAW_FILE="""in_voltage{mux1}-voltage{mux2}_raw"""
+    MUX_INPUT_FILE="""in_voltage{mux1}-voltage{mux2}_input"""
 
     def __init__(self, config_list: list) -> None:
         self.__channels: list = []
