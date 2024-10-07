@@ -11,17 +11,17 @@ class ArcturusGpios():
     def __init__(self, gpio_chip, gpio_id, consumer_name) -> None:
         self.__line = None
         self.__gpio_id = gpio_id
-
+        print(self.GPIO_DEV_PATH.format(gpio_chip))
         try:
             with gpiod.request_lines(
-                path=self.GPIO_DEV_PATH.format(gpio_chip),
+                path=str(self.GPIO_DEV_PATH.format(gpio_chip)),
                 consumer=consumer_name,
                 config={gpio_id: gpiod.LineSettings(direction=Direction.INPUT)},
             ) as line:
                 self.__line = line
         except Exception as error:
-            print(f'ArcturusGpio could not get {gpio_chip}:{gpio_id} for {consumer_name} \
-                  Error {type(error).__name__} - {error}')
+            print(f'ArcturusGpio could not get {gpio_chip}:{gpio_id} for {consumer_name}\n \
+Error {type(error).__name__} - {error}')
 
     def get_value(self):
         """
