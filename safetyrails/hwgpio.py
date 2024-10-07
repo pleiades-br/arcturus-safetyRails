@@ -1,8 +1,8 @@
 import os
 import gpiod
-from gpiod.line import Edge, Direction, Value, Bias
+from gpiod.line import Direction, Value
 
-class ArcturusGpios():
+class HWGpio():
     """
         Create a gpio object that will monitor the gpio value
     """
@@ -22,15 +22,23 @@ class ArcturusGpios():
             int: 0 or 1 for the current value
                 -1 for an error
         """
+        value = -1
         try:
             with gpiod.request_lines(
                 path=self.__gpio_chip,
                 consumer=self.__consumer,
                 config={self.__gpio_id: gpiod.LineSettings(direction=Direction.INPUT)},
             ) as line:
-                self.__last_value = line.get_value(self.__gpio_id)
+                value = line.get_value(self.__gpio_id)
         except Exception as error:
-            print(f'ArcturusGpio could not get {gpio_chip}:{gpio_id} for {consumer_name}\n \
-Error {type(error).__name__} - {error}')
+            print(f'ArcturusGpio could not get {self.__gpio_chip}:{self.__gpio_id} \
+                  for {self.__consumer}\n Error {type(error).__name__} - {error}')
+
+        if value == Value.ACTIVE:
+            self.__last_value = 1
+        elif value == Value.INACTIVE:
+            self.__last_value = 0
+        else:
+            self.__last_value = -1
 
         return self.__last_value
