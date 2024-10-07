@@ -1,40 +1,9 @@
 import os
-import pyaudio
-import wave
-import argparse
+import threading
 from datetime import datetime, timedelta
 from sensors import Sensors
-
-def play(file):
-    CHUNK = 1024
-
-    # Open the audio file
-    wf = wave.open(file, 'rb')
-
-    # Initialize PyAudio
-    p = pyaudio.PyAudio()
-
-    # Open a stream
-    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                    channels=wf.getnchannels(),
-                    rate=wf.getframerate(),
-                    output=True)
-
-    # Read data
-    data = wf.readframes(CHUNK)
-
-    # Play the audio
-    try:
-        while data:
-            stream.write(data)
-            data = wf.readframes(CHUNK)
-    except Exception as error:
-        print(f'Not possible to play filename {file}. Error {type(error).__name__} - {error}')
-
-    # Close the stream and PyAudio
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+from arcturus_gpios import ArcturusGpios
+from watchers import rail_gpio_watchdog
 
 def play_with_aplay(filename):
     cmd = f'aplay {filename}'
@@ -44,17 +13,11 @@ def main():
     '''
         Argument parsing with argparse and main job
     '''
-    sensor = Sensors()
-    temp, humi = sensor.shtc3.get_sensor_data()
-    print(f'Sensor data {temp}:{humi}%\n')
-    data = sensor.pt100.get_sensor_data()
-    print(f'Pt100 data {data}\n')
-
-    data = sensor.ads1115.get_sensor_data()
-    print(f'ADS data {data}\n')
-
-    data = sensor.pac1945.get_sensor_data()
-    print(f'PAC data {data}\n')
+    #sensor = Sensors()
+    railgpio = ArcturusGpios(3, 20, "rail")
+    thread1 = threading.Thread(target=rail_gpio_watchdog, args=(railgpio, 10, False))
+    thread1.start()
+    thread1.join()
 
 if __name__ == '__main__':
     main()
