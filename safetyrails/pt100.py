@@ -1,13 +1,15 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
+from sensor import Sensor
 
-class Pt100():
+class Pt100(Sensor):
     """
     This class works with the data from ads122c04
     Read the linux subsystem inside /sys and make all necessary
     data transformation
 
     Init args:
+        sensor_name: The sensor name/nickname
         config: List if a dictionary of parameters {'name', 'ch1', 'ch2'}, 
                 each one containing a given name for the pads and the channel config
 
@@ -21,7 +23,8 @@ class Pt100():
     MUX_RAW_FILE="""in_voltage{mux1}-voltage{mux2}_raw"""
     MUX_INPUT_FILE="""in_voltage{mux1}-voltage{mux2}_input"""
 
-    def __init__(self, config: list) -> None:
+    def __init__(self, sensor_name: str, config: list) -> None:
+        super().__init__(sensor_name)
         self.__channels: list = []
         self.__dirpath: str = ""
         self.__get_dirpath()

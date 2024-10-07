@@ -1,13 +1,15 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
+from sensor import Sensor
 
-class Pac1945():
+class Pac1945(Sensor):
     """
     This class works with the data from pac1945
     Read the linux subsystem inside /sys and make all necessary
     data transformation
 
     Init args:
+        sensor_name: The sensor name/nickname
         config: List if a dictionary of parameters {'name', 'ch1'}, 
                 each one containing a given name for the pads and the channel config
 
@@ -18,7 +20,8 @@ class Pac1945():
     NAME="""AIN{mux1}"""
     RAW_FILE="""in_voltage{mux1}_raw"""
 
-    def __init__(self, config: list) -> None:
+    def __init__(self, sensor_name: str, config: list) -> None:
+        super().__init__(sensor_name)
         self.__channels: list = []
         self.__dirpath: str = ""
         self.__get_dirpath()
