@@ -6,15 +6,15 @@ class ArcturusGpios():
     """
         Create a gpio object that will monitor the gpio value
     """
-    GPIO_DEV_PATH="""/dev/gpiochip{gpio_chip}"""
+    GPIO_DEV_PATH="""/dev/gpiochip{n}"""
 
     def __init__(self, gpio_chip, gpio_id, consumer_name) -> None:
         self.__line = None
         self.__gpio_id = gpio_id
-        print(self.GPIO_DEV_PATH.format(gpio_chip))
+        print(self.GPIO_DEV_PATH.format(n=gpio_chip))
         try:
             with gpiod.request_lines(
-                path=str(self.GPIO_DEV_PATH.format(gpio_chip)),
+                path=str(self.GPIO_DEV_PATH.format(n=gpio_chip)),
                 consumer=consumer_name,
                 config={gpio_id: gpiod.LineSettings(direction=Direction.INPUT)},
             ) as line:
