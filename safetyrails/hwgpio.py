@@ -10,7 +10,7 @@ class HWGpio():
 
     def __init__(self, gpio_chip, gpio_id, consumer_name) -> None:
         self.__gpio_id = gpio_id
-        self.__last_value = 0
+        self.__last_value = False
         self.__gpio_chip = self.GPIO_DEV_PATH.format(n=gpio_chip)
         self.__consumer = consumer_name
 
@@ -22,7 +22,6 @@ class HWGpio():
             int: 0 or 1 for the current value
                 -1 for an error
         """
-        value = -1
         try:
             with gpiod.request_lines(
                 path=self.__gpio_chip,
@@ -35,10 +34,8 @@ class HWGpio():
                   for {self.__consumer}\n Error {type(error).__name__} - {error}')
 
         if value == Value.ACTIVE:
-            self.__last_value = 1
-        elif value == Value.INACTIVE:
-            self.__last_value = 0
+            self.__last_value = True
         else:
-            self.__last_value = -1
+            self.__last_value = False
 
         return self.__last_value
