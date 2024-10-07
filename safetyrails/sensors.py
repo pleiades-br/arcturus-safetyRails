@@ -39,6 +39,12 @@ class Sensors():
         return channels
 
     def get_sensors_data(self):
+        """ 
+        Get data from all sensors
+
+        Return:
+            Dicitionary: information gathered from the sensors
+        """
         temp, humi = self.__get_shtc3_data()
         return {
             "shtc3": {
