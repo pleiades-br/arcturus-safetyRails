@@ -49,6 +49,7 @@ class Pt100():
         for entry in config:
             channel = {}
             if 'name' not in entry or 'ch1' not in entry:
+                print('pt100: Channel config does not have the minimal parameters')
                 continue
 
             if 'ch2' in entry:

@@ -12,7 +12,7 @@ class Pac1945():
                 each one containing a given name for the pads and the channel config
 
     Raises:
-        FileNotFound: When could not find the ads122c04 inside /sys
+        FileNotFound: When could not find the pac1945 inside /sys
     """
 
     NAME="""AIN{mux1}"""
@@ -45,7 +45,9 @@ class Pac1945():
     def __create_channel_list(self, config: list):
         for entry in config:
             if 'name' not in entry or 'ch1' not in entry:
+                print('pac1945: Channel config does not have the minimal parameters')
                 continue
+
             channel = {
                     "name": entry['name'],
                     "hw_name": self.NAME.format(mux1=entry['ch1']),
