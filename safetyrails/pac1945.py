@@ -34,7 +34,7 @@ class Pac1945(Sensor):
                 try:
                     with open(sensor_name_file, 'r') as file:
                         sensor_name = file.read().strip()
-                        if sensor_name == 'pac1945_1':
+                        if sensor_name == 'microship,pac1952_1':
                             for entry in os.listdir(os.path.join(LINUX_SYS_I2C_PATH, dirs)):
                                 if entry.startswith('iio'):
                                     self.__dirpath = os.path.join(LINUX_SYS_I2C_PATH, dirs, entry)
@@ -43,7 +43,7 @@ class Pac1945(Sensor):
                     continue
 
         if self.__dirpath == "":
-            raise FileNotFoundError("Could not find pac1945_1 sys folder")
+            raise FileNotFoundError("Could not find pac1952_1 sys folder")
 
     def __create_channel_list(self, config: list):
         for entry in config:
