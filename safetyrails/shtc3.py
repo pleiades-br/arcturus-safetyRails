@@ -2,6 +2,15 @@ import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
 
 class Shtc3():
+    """
+    This class works with the data from shtc3
+    Read the linux subsystem inside /sys and make all necessary
+    data transformation
+
+    Raises:
+        FileNotFound: When could not find the ads122c04 inside /sys
+    """
+
     TEMPERATURE_FILE = "hwmon/hwmon0/temp1_input"
     HUMIDITY_FILE = "hwmon/hwmon0/humidity1_input"
 
@@ -49,6 +58,11 @@ class Shtc3():
             self.__humidity = float(value / 1000)
 
     def get_sensor_data(self):
+        """ Get an update sensor data
+            
+        Returns:
+             float: temperature and humidity
+        """
         self.__update_temperature_data()
         self.__update_humidity_data()
         return self.__temperature, self.__humidity
