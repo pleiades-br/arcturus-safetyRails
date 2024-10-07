@@ -10,6 +10,7 @@ class ArcturusGpios():
 
     def __init__(self, gpio_chip, gpio_id, consumer_name) -> None:
         self.__line = None
+        self.__gpio_id = gpio_id
 
         try:
             with gpiod.request_lines(
@@ -22,7 +23,7 @@ class ArcturusGpios():
             print(f'ArcturusGpio could not get {gpio_chip}:{gpio_id} for {consumer_name} \
                   Error {type(error).__name__} - {error}')
 
-    def get_value(self, gpio_id):
+    def get_value(self):
         """
             Return the current value (0 or 1) from a given gpio
         Args:
@@ -33,6 +34,6 @@ class ArcturusGpios():
                 -1 for an error
         """
         if self.__line is not None:
-            return self.__line.get_value(gpio_id)
+            return self.__line.get_value(self.__gpio_id)
 
         return -1
