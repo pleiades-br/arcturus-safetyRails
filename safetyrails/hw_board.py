@@ -15,47 +15,47 @@ class HWBoard():
     """
     def __init__(self) -> None:
         self.ads1115 = Ads1115("ADS1115",
-                               {
-                                    '1': {
+                               [
+                                    {
                                         'name': "Sensor Corrente de Barra",
                                         'ch1': 0,
                                         'ch2': 1,
                                     },
-                                    '2': {
+                                    {
                                         'name': "External Analog DC/Input J3",
                                         'ch1': 3,
                                     },
-                                    '3': {
+                                    {
                                         'name': "External Analog DC/Input J4",
                                         'ch1': 2,
                                     },
-                               })
+                               ])
 
-        self.pac1945 = Pac1945("PAC1945",
-                               {
-                                    '1': {
+        self.pac1945 = Pac1945("PAC1952",
+                               [
+                                    {
                                         'name': "Bateria",
                                         'ch1': 1,
                                     },
-                                    '2': {
+                                    {
                                         'name': "Célula Solar",
                                         'ch1': 2,                                        
                                     },
-                               })
+                               ])
 
         self.pt100 = Pt100("PT100",
-                            {
-                                '1': {
+                            [
+                                {
                                     'name': "Temperature Sensor CH1",
                                     'ch1': 0,
                                     'ch2': 1,
                                 },
-                                '2': {
+                                {
                                     'name':  "Temperature Sensor CH2",
                                     'ch1': 2,
                                     'ch2': 3,
                                 }
-                            })
+                            ])
 
         self.shtc3 = Shtc3("SHTC3")
         self.gpio_lock = threading.Lock()
