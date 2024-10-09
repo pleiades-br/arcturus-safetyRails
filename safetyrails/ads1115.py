@@ -76,7 +76,8 @@ class Ads1115(Sensor):
     def __update_data(self):
         for channel in self.__channels:
             try:
-                with open(channel["raw_file"],'r') as file: 
+                channel_file = os.path.join(self.__dirpath, channel["raw_file"])
+                with open(channel_file, 'r') as file:
                     channel["raw_value"] = int(file.read().strip())
 
             except Exception:

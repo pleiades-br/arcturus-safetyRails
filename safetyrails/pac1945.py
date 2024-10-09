@@ -63,8 +63,9 @@ class Pac1945(Sensor):
 
     def __update_data(self):
         for channel in self.__channels:
+            channel_file = os.path.join(self.__dirpath, channel["raw_file"])
             try:
-                with open(channel["raw_file"],'r') as file: 
+                with open(channel_file,'r') as file: 
                     channel["raw_value"] = int(file.read().strip())
 
             except Exception:

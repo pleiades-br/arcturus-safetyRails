@@ -10,7 +10,7 @@ def sensors_watchdog(hwboard: HWBoard, sleep_time: int, finish: bool):
         with hwboard.ads1115.lock:
             print(hwboard.ads1115.get_sensor_data())
         with hwboard.pt100.lock:
-            print(hwboard.ads1115.get_sensor_data())
+            print(hwboard.pt100.get_sensor_data())
         time.sleep(sleep_time)
 
 
