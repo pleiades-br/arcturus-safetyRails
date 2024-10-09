@@ -5,6 +5,12 @@ def sensors_watchdog(hwboard: HWBoard, sleep_time: int, finish: bool):
     while finish is False:
         with hwboard.shtc3.lock:
             print(hwboard.shtc3.get_sensor_data())
+        with hwboard.pac1945.lock:
+            print(hwboard.pac1945.get_sensor_data())
+        with hwboard.ads1115.lock:
+            print(hwboard.ads1115.get_sensor_data())
+        with hwboard.pt100.lock:
+            print(hwboard.ads1115.get_sensor_data())
         time.sleep(sleep_time)
 
 
