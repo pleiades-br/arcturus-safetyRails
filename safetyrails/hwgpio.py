@@ -22,6 +22,7 @@ class HWGpio():
             int: 0 or 1 for the current value
                 -1 for an error
         """
+        value = False
         try:
             with gpiod.request_lines(
                 path=self.__gpio_chip,
