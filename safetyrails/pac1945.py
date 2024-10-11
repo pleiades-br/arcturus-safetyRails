@@ -1,6 +1,6 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
-from sensor import Sensor
+from sensor import Sensor, SensorData
 
 class Pac1945(Sensor):
     """
@@ -50,23 +50,21 @@ class Pac1945(Sensor):
             if 'name' not in entry or 'ch1' not in entry:
                 print('pac1945: Channel config does not have the minimal parameters')
                 continue
-
-            channel = {
-                    "name": entry['name'],
-                    "hw_name": self.NAME.format(mux1=entry['ch1']),
-                    "raw_file": self.RAW_FILE.format(mux1=entry['ch1']),
-                    "raw_value": 0,
-                    "offset": 0
-                }
+            
+            channel = SensorData( 
+                name=entry['name'],
+                hw_name=self.NAME.format(mux1=entry['ch1']),
+                raw_file=self.RAW_FILE.format(mux1=entry['ch1'])
+            )
 
             self.__channels.append(channel)
 
     def __update_data(self):
         for channel in self.__channels:
-            channel_file = os.path.join(self.__dirpath, channel["raw_file"])
+            channel_file = os.path.join(self.__dirpath, channel.raw_file)
             try:
                 with open(channel_file,'r') as file: 
-                    channel["raw_value"] = int(file.read().strip())
+                    channel.raw_value = int(file.read().strip())
 
             except Exception:
                 print(f"Pac1945 could not take data from {channel['name']}")
