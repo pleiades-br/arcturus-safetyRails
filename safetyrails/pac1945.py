@@ -50,7 +50,7 @@ class Pac1945(Sensor):
             if 'name' not in entry or 'ch1' not in entry:
                 print('pac1945: Channel config does not have the minimal parameters')
                 continue
-            
+
             channel = SensorData( 
                 name=entry['name'],
                 hw_name=self.NAME.format(mux1=entry['ch1']),
@@ -67,7 +67,7 @@ class Pac1945(Sensor):
                     channel.raw_value = int(file.read().strip())
 
             except Exception:
-                print(f"Pac1945 could not take data from {channel['name']}")
+                print(f"Pac1945 could not take data from {channel.name}")
                 continue
 
     def get_sensor_data(self):

@@ -1,6 +1,6 @@
 import os
 from shared_linux_const import LINUX_SYS_I2C_PATH
-from sensor import Sensor
+from sensor import Sensor, SensorData
 
 class Pt100(Sensor):
     """
@@ -50,46 +50,35 @@ class Pt100(Sensor):
 
     def __create_channel_list(self, config: list):
         for entry in config:
-            channel = {}
+
             if 'name' not in entry or 'ch1' not in entry:
                 print('pt100: Channel config does not have the minimal parameters')
                 continue
 
-            if 'ch2' in entry:
-                channel = {
-                    "name": entry['name'],
-                    "hw_name": self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2']),
-                    "raw_file": self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2']),
-                    "raw_value": 0,
-                    "input_file": self.MUX_INPUT_FILE.format(mux1=entry['ch1'], mux2=entry['ch2']),
-                    "input_value": 0,
-                    "offset": 0
-                }
+            channel = SensorData(name=entry["name"])
+            if 'ch2' in entry:    
+                channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
+                channel.raw_file = self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
+                channel.input_file = self.MUX_INPUT_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
             else:
-                channel = {
-                    "name": entry['name'],
-                    "hw_name": self.NAME.format(mux1=entry['ch1']),
-                    "raw_file": self.RAW_FILE.format(mux1=entry['ch1']),
-                    "raw_value": 0,
-                    "input_file": self.INPUT_FILE.format(mux1=entry['ch1']),
-                    "input_value": 0,
-                    "offset": 0
-                }
+                channel.hw_name = self.NAME.format(mux1=entry['ch1'])
+                channel.raw_file = self.RAW_FILE.format(mux1=entry['ch1'])
+                channel.input_file = self.INPUT_FILE.format(mux1=entry['ch1'])
 
             self.__channels.append(channel)
 
     def __update_data(self):
         for channel in self.__channels:
             try:
-                channel_raw_file = os.path.join(self.__dirpath, channel["raw_file"])
-                channel_input_file = os.path.join(self.__dirpath, channel["input_file"])
+                channel_raw_file = os.path.join(self.__dirpath, channel.raw_file)
+                channel_input_file = os.path.join(self.__dirpath, channel.input_files)
                 with open(channel_raw_file,'r') as file: 
-                    channel["raw_value"] = int(file.read().strip())
+                    channel.raw_value = int(file.read().strip())
 
                 with open(channel_input_file,'r') as file: 
-                    channel["input_value"] = int(file.read().strip())
+                    channel.input_value = int(file.read().strip())
             except Exception:
-                print(f"PT100 could not take data from {channel['name']}")
+                print(f"PT100 could not take data from {channel.name}")
                 continue
 
     def get_sensor_data(self):
