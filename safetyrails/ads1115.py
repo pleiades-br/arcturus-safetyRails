@@ -53,8 +53,7 @@ class Ads1115(Sensor):
                 print('ads1115: Channel config does not have the minimal parameters')
                 continue
 
-            channel = SensorData()
-            channel.name = entry["name"]
+            channel = SensorData(name=entry["name"])
             if 'ch2' in entry:    
                 channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
                 channel.raw_file = self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
