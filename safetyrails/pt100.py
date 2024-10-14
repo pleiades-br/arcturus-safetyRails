@@ -69,11 +69,12 @@ class Pt100(Sensor):
 
     def __update_data(self):
         for channel in self.__channels:
+            print(channel.raw_file)
+            print(channel.input_files)
+            print(self.__dirpath)
             try:
                 channel_raw_file = os.path.join(self.__dirpath, channel.raw_file)
                 channel_input_file = os.path.join(self.__dirpath, channel.input_files)
-                print(channel_raw_file)
-                print(channel_input_file)
                 with open(channel_raw_file,'r') as file: 
                     channel.raw_value = int(file.read().strip())
 
