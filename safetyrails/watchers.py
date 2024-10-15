@@ -1,6 +1,12 @@
 import time
 from hw_board import HWBoard
 
+
+def play_with_aplay(filename):
+    cmd = f'aplay {filename}'
+    os.system(cmd)
+
+
 def sensors_watchdog(hwboard: HWBoard, sleep_time: int, stop_event):
     while not stop_event.is_set():
         with hwboard.shtc3.lock:
