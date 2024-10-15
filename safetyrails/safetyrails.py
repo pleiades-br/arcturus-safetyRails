@@ -3,7 +3,7 @@ import threading
 import time
 from hw_board import HWBoard
 from watchers import rail_gpio_watchdog, sensors_watchdog, ptas_gpio_watchog
-from config import SftrailsConfig
+from appconfig import SftrailsConfig
 
 
 def main():
@@ -11,13 +11,12 @@ def main():
         Argument parsing with argparse and main job
     '''
     stop_event = threading.Event()
-    sftrails_conf = SftrailsConfig()
+    appconf = SftrailsConfig()
     hwboard = HWBoard()
 
-    print(sftrails_conf)
-    thread1 = threading.Thread(target=rail_gpio_watchdog, args=(hwboard, 5, stop_event))
-    thread2 = threading.Thread(target=sensors_watchdog, args=(hwboard, 15, stop_event))
-    thread3 = threading.Thread(target=ptas_gpio_watchog, args=(hwboard, 10, stop_event))
+    thread1 = threading.Thread(target=rail_gpio_watchdog, args=(hwboard, appconf, stop_event))
+    thread2 = threading.Thread(target=sensors_watchdog, args=(hwboard, appconf, stop_event))
+    thread3 = threading.Thread(target=ptas_gpio_watchog, args=(hwboard, appconf, stop_event))
     thread1.start()
     thread2.start()
     thread3.start()
@@ -26,7 +25,6 @@ def main():
         while not stop_event.is_set():
             time.sleep(1)  # Simulate doing some work in the main thread
     except KeyboardInterrupt:
-        print(hwboard)
         print("Interrupt by user!")
     finally:
         stop_event.set()
@@ -34,6 +32,7 @@ def main():
     thread1.join()
     thread2.join()
     thread3.join()
+    appconf.write_config_to_file()
 
 if __name__ == '__main__':
     main()

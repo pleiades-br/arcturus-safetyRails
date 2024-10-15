@@ -1,5 +1,14 @@
 import os
 import configparser
+from enum import Enum
+
+class SftrailsSensorTimers(Enum):
+    """
+    Base Enum for access config without name dependency
+    """
+    SENSOR_DATA = 1
+    BARRA_CHECK = 2
+    PTA_CHECK = 3
 
 class SftrailsConfig():
     """
@@ -21,20 +30,20 @@ class SftrailsConfig():
             'username':'',
             'password':'',
             'topic':'',
-            'Sleep_timer_s': 60,
+            'sleep_timer_s': 60,
         },
 
         'Sensor Timers': {
-            'Sensor_data_s': 15,
-            'Barra_in_check_s': 5,
-            'PTAs_s': 10,
+            'sensor_data_s': 15,
+            'barra_in_check_s': 5,
+            'ptas_s': 10,
         },
 
         'Alarm Sensor Thresholds':{
-            'Barra_v_check_mv': 4000,
-            'Barra_temperature_c': 60,
-            'Battery_mv': 10000,
-            'Solar_pannel': 4500
+            'barra_v_check_mv': 4000,
+            'barra_temperature_c': 60,
+            'battery_mv': 10000,
+            'solar_pannel': 4500
         },
 
         'Barra IN WAV': {
@@ -87,3 +96,26 @@ class SftrailsConfig():
         if not self.config.has_section(section):
             self.config.add_section(section)
         self.config.set(section, key, value)
+
+    def get_sensor_time(self, key: int):
+        """
+        Return a specific value of a sensor timer inside config file
+        also return a string containg any error that could occurr 
+        """
+        err = ''
+        timer = 0
+        section = 'Sensor Timers'
+
+        if self.config.has_section(section):
+            match key:
+                case SftrailsSensorTimers.SENSOR_DATA:
+                    timer = self.config.getint(section, 'sensor_data_s')
+                case SftrailsSensorTimers.BARRA_CHECK:
+                    timer = self.config.getint(section, 'barra_in_check_s')
+                case SftrailsSensorTimers.PTA_CHECK:
+                    timer = self.config.getint(section, 'ptas_s')
+                case _:
+                    err = f'Key {key} invalid for section {section}'
+        else:
+            err = 'Section "Sensor Timer" not found'
+        return timer, err
