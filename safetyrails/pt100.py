@@ -69,19 +69,20 @@ class Pt100(Sensor):
 
     def __update_data(self):
         for channel in self.__channels:
-            print(self.__dirpath)
-            print(channel.raw_file)
-            print(channel.input_file)
             try:
                 channel_raw_file = os.path.join(self.__dirpath, channel.raw_file)
-                channel_input_file = os.path.join(self.__dirpath, channel.input_file)
                 with open(channel_raw_file,'r') as file: 
                     channel.raw_value = int(file.read().strip())
+            except Exception:
+                print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
+                continue
 
+            try:
+                channel_input_file = os.path.join(self.__dirpath, channel.input_file)
                 with open(channel_input_file,'r') as file: 
                     channel.input_value = int(file.read().strip())
             except Exception:
-                print(f"PT100 could not take data from {channel.name}")
+                print(f"PT100 could not take data from {channel.name} using {channel.input_file}")
                 continue
 
     def get_sensor_data(self):
