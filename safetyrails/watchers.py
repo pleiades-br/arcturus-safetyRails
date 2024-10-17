@@ -1,11 +1,10 @@
 import time
 from hw_board import HWBoard
 from appconfig import SftrailsConfig, SftrailsSensorTimers
+import os_shared 
 
 
-def play_with_aplay(filename):
-    cmd = f'aplay {filename}'
-    os.system(cmd)
+
 
 
 def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
@@ -32,9 +31,23 @@ def rail_gpio_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
         print(err)
         return
 
+    files, err = config.get_wav_files()
+    if err:
+        print(err)
+
     while not stop_event.is_set():
         with hwboard.gpio_lock:
-            print(f'rail value {hwboard.barra_in.get_value()}')
+            value = hwboard.barra_in.get_value()
+            if value is True:
+                if hwboard.is_barra_in_alarm_sent is False and len(files) > 0:
+                    for file in files:
+                        os_shared.play_with_aplay(file)
+                    hwboard.is_barra_in_alarm_sent = True
+            else:
+                hwboard.is_barra_in_alarm_sent = False
+
+            print(f'rail value {value}')
+
         time.sleep(sleep_time)
 
 

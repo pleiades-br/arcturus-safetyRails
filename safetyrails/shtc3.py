@@ -1,5 +1,5 @@
 import os
-from shared_linux_const import LINUX_SYS_I2C_PATH
+from os_shared import LINUX_SYS_I2C_PATH
 from sensor import Sensor
 
 class Shtc3(Sensor):

@@ -46,8 +46,8 @@ class SftrailsConfig():
             'solar_pannel': 4500
         },
 
-        'Barra IN WAV': {
-            'number_files': 3,
+        'Barra wav': {
+            'number_files': 0,
             'wav_file1': '',
             'wav_file2': '',
             'wav_file3': '',
@@ -119,3 +119,23 @@ class SftrailsConfig():
         else:
             err = 'Section "Sensor Timer" not found'
         return timer, err
+
+    def get_wav_files(self):
+        """
+        Return a list containing the wav files that other module will consume
+        and play it
+        """
+        err = ''
+        files_list = []
+        section = 'Barra wav'
+        num_files = self.config.getint(section, 'number_files')
+        if num_files > 0 and num_files <= 6:
+            for i in range(1, num_files + 1):
+                key = f'wav_file{i}'
+                files_list.append(self.config.get(section, key))
+        elif num_files == 0:
+            err = 'No wav files configured'
+        else:
+            err = f'Num of wav file is incorrect:  min 1, max 5, read {num_files}'
+        return files_list, err
+

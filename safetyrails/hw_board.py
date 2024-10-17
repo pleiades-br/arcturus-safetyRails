@@ -60,5 +60,6 @@ class HWBoard():
         self.shtc3 = Shtc3("SHTC3")
         self.gpio_lock = threading.Lock()
         self.barra_in = HWGpio(3, 20, "Rail Bar")
+        self.is_barra_in_alarm_sent = False
         self.pta1 = HWGpio(4, 6, "PTA1")
         self.pta2 = HWGpio(4, 4, "PTA2")
