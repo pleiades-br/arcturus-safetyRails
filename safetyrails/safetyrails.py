@@ -36,7 +36,7 @@ def main():
     thread1.start()
     thread2.start()
     thread3.start()
-    
+
     try:
         while not stop_event.is_set():
             time.sleep(1)  # Simulate doing some work in the main thread

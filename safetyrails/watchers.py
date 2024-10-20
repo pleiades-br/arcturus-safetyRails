@@ -1,13 +1,18 @@
 import time
 from hw_board import HWBoard
 from appconfig import SftrailsConfig, SftrailsSensorTimers
-import os_shared 
-
-
+import os_shared
 
 
 
 def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
+    """
+    This functions is used to watch and collect sensor data
+    Args:
+        hwboard (HWBoard):  Hardware Description 
+        config (SftrailsConfig): Configuration of the application
+        stop_event (Event): Event that inidicate to exit the loop and finish the function
+    """
     sleep_time, err = config.get_sensor_time(SftrailsSensorTimers.SENSOR_DATA)
     if sleep_time == 0:
         print(err)
@@ -26,6 +31,14 @@ def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
 
 
 def rail_gpio_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
+    """
+    This functions is used to watch the BARRA IN gpio event, if the event is true
+    play the sound to inform that the barra in event is detect
+    Args:
+        hwboard (HWBoard):  Hardware Description 
+        config (SftrailsConfig): Configuration of the application
+        stop_event (Event): Event that inidicate to exit the loop and finish the function
+    """
     sleep_time, err = config.get_sensor_time(SftrailsSensorTimers.BARRA_CHECK)
     if sleep_time == 0:
         print(err)
@@ -52,6 +65,13 @@ def rail_gpio_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
 
 
 def ptas_gpio_watchog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
+    """
+    This functions is used to watch the PTAs gpio events
+    Args:
+        hwboard (HWBoard):  Hardware Description 
+        config (SftrailsConfig): Configuration of the application
+        stop_event (Event): Event that inidicate to exit the loop and finish the function
+    """
     sleep_time, err = config.get_sensor_time(SftrailsSensorTimers.PTA_CHECK)
     if sleep_time == 0:
         print(err)
