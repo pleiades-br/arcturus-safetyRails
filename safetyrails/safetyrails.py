@@ -15,7 +15,7 @@ def argument_parser() -> str:
     parser.add_argument(
         '--config-file', 
         type=str,
-        default='/etc/sftrails/sftrail.conf',
+        default='/etc/sftrails/sftrails.conf',
         help='Path/filename to the config file'
     )
 
