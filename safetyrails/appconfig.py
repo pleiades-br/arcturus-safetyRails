@@ -22,7 +22,7 @@ class SftrailsConfig():
     Raises:
         FileNotFound: When an error trying to write in the file_path
     """
-    CONFIG_PATH_FILE='/etc/sftrails/sftrail.conf'
+    CONFIG_PATH_FILE='/etc/sftrails/sftrails.conf'
     default_config = {
         'MQTT': {
             'host':'',
