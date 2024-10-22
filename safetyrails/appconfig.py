@@ -2,6 +2,7 @@ import os
 import configparser
 from enum import Enum
 
+
 class SftrailsSensorTimers(Enum):
     """
     Base Enum for access config without name dependency
