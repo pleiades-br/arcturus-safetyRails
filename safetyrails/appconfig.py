@@ -140,3 +140,9 @@ class SftrailsConfig():
             err = f'Num of wav file is incorrect:  min 1, max 5, read {num_files}'
         return files_list, err
 
+
+    def get_mqtt_config(self):
+        """
+        Return the mqtt config as dictionary 
+        """
+        return dict(self.config['MQTT'])
