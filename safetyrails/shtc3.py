@@ -1,6 +1,6 @@
 import os
 from os_shared import LINUX_SYS_I2C_PATH
-from sensor import Sensor
+from sensor import Sensor, SensorData
 
 class Shtc3(Sensor):
     """
@@ -17,8 +17,8 @@ class Shtc3(Sensor):
 
     def __init__(self, sensor_name: str) -> None:
         super().__init__(sensor_name)
-        self.__temperature: float = 0
-        self.__humidity: float = 0
+        self.__temperature: SensorData(name="Temperature", raw_file=self.TEMPERATURE_FILE)
+        self.__humidity: SensorData(name="Humidity", raw_file=self.HUMIDITY_FILE)
         self.__dirpath: str = ""
         self.__get_dirpath()
 
@@ -48,16 +48,20 @@ class Shtc3(Sensor):
             return error
 
     def __update_temperature_data(self):
-        value = self.__get_driver_data(os.path.join(self.__dirpath, self.TEMPERATURE_FILE))
+        value = self.__get_driver_data(os.path.join(self.__dirpath,
+                                                    getattr(self.__temperature, "raw_file")))
         if isinstance(value, int):
             # Scale from linux to avoid float points"
-            self.__temperature = float(value / 1000)
+            setattr(self.__temperature, "raw_value", value)
+            setattr(self.__temperature, "value", float(value / 1000))
 
     def __update_humidity_data(self):
-        value = self.__get_driver_data(os.path.join(self.__dirpath, self.HUMIDITY_FILE))
+        value = self.__get_driver_data(os.path.join(self.__dirpath, 
+                                                    getattr(self.__humidity, "raw_file")))
         if isinstance(value, int):
             # Scale from linux to avoid float points"
-            self.__humidity = float(value / 1000)
+            setattr(self.__humidity, "raw_value", value)
+            setattr(self.__humidity, "value", float(value / 1000))
 
     def get_sensor_data(self):
         """ 
