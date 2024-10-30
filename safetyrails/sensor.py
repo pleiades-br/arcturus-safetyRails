@@ -38,14 +38,7 @@ class SensorData():
         if include:
             data_dict = {key: data_dict[key] for key in include if key in data_dict}
         return json.dumps(data_dict)
-    
-    def to_dict_name_raw_value(self):
-        """
-        Just return the name of sensor as key and raw_value as value
-        """
-        return {
-            self.name: self.raw_value
-        }
+
 
 class Sensor():
     """

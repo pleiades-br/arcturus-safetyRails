@@ -1,4 +1,5 @@
 import time
+import json
 from hw_board import HWBoard
 from appconfig import SftrailsConfig, SftrailsSensorTimers
 import paho.mqtt.client as mqtt
@@ -52,21 +53,23 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     mqttc.on_subscribe = on_subscribe
     mqttc.on_unsubscribe = on_unsubscribe
     mqttc.on_publish = on_publish
-    print(hwboard.get_all_sensors_values_as_json())
-"""     unacked_msg = set()
+    unacked_msg = set()
     mqttc.user_data_set(unacked_msg)
     mqttc.username_pw_set(mqtt_config['username'], mqtt_config['password'])
 
-
     while not stop_event.is_set():
-        mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
-        mqttc.loop_start()
-        
-        msg = hwboard
-        msg_info = mqttc.publish(mqtt_config['topic'], "my message", qos=1)
-        unacked_msg.add(msg_info.mid)
-        msg_info.wait_for_publish()
+        print(hwboard.get_all_sensors_values_as_json())
+        print("==============JSON==============")
+        print(json.dumps(hwboard.get_all_sensors_values_as_json()))
+        if mqtt_config['host'] and mqtt_config['port'] and mqtt_config['topic']:
+            mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
+            mqttc.loop_start()
+            msg_info = mqttc.publish(mqtt_config['topic'], "my message", qos=2)
+            unacked_msg.add(msg_info.mid)
+            msg_info.wait_for_publish()
 
-        mqttc.disconnect()
-        mqttc.loop_stop()
-        time.sleep(int(mqtt_config['sleep_timer_s'])) """
+            mqttc.disconnect()
+            mqttc.loop_stop()
+
+   
+        time.sleep(int(mqtt_config['sleep_timer_s']))

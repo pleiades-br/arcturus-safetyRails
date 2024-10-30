@@ -18,7 +18,7 @@ class HWBoard():
         self.ads1115 = Ads1115("ADS1115",
                                [
                                     {
-                                        'name': "corrent_barra",
+                                        'name': "vcc_bar",
                                         'ch1': 0,
                                         'ch2': 1,
                                     },
@@ -35,11 +35,11 @@ class HWBoard():
         self.pac1945 = Pac1945("PAC1952",
                                [
                                     {
-                                        'name': "bateria",
+                                        'name': "battery",
                                         'ch1': 1,
                                     },
                                     {
-                                        'name': "celula_solar",
+                                        'name': "solar_cel",
                                         'ch1': 2,                                        
                                     },
                                ])
@@ -47,12 +47,12 @@ class HWBoard():
         self.pt100 = Pt100("PT100",
                             [
                                 {
-                                    'name': "temperature_rail_ch1",
+                                    'name': "temperature_bar_ch1",
                                     'ch1': 0,
                                     'ch2': 1,
                                 },
                                 {
-                                    'name':  "temperature_rail_ch2",
+                                    'name':  "temperature_bar_ch2",
                                     'ch1': 2,
                                     'ch2': 3,
                                 }
@@ -60,10 +60,20 @@ class HWBoard():
 
         self.shtc3 = Shtc3("SHTC3")
         self.gpio_lock = threading.Lock()
-        self.barra_in = HWGpio(3, 20, "Rail Bar")
+        self.barra_in = HWGpio(3, 20, "BAR IN")
         self.is_barra_in_alarm_sent = False
         self.pta1 = HWGpio(4, 6, "PTA1")
         self.pta2 = HWGpio(4, 4, "PTA2")
+        self.__update_all_sensors()
+
+    def __update_all_sensors(self):
+        """
+        Force a sensor reading on all sensors available on Hwboard
+        """
+        self.shtc3.update_sensor_data()
+        self.ads1115.update_sensor_data()
+        self.pt100.update_sensor_data()
+        self.pac1945.update_sensor_data()
 
     def get_all_sensors_values_as_json(self) -> str:
         """
@@ -72,20 +82,15 @@ class HWBoard():
             str: all sensors in json format
         """
         temperature_hw, humidity_hw = self.shtc3.get_sensor_data()
-        ads_channels = self.ads1115.get_sensor_data()
-        pta_channels = self.pt100.get_sensor_data()
-        pac_channels = self.pac1945.get_sensor_data()
 
         sensors_data = {
-            "temp_hw": temperature_hw.to_json("value"),
-            "humi_hw": humidity_hw.to_json("value"),
-            "external_sensors": [
-                [channel.to_dict_name_raw_value() for channel in ads_channels],
-                [channel.to_dict_name_raw_value() for channel in pta_channels],
-                [channel.to_dict_name_raw_value() for channel in pac_channels]
-            ],
+            "temp_hw": temperature_hw.getattr("value"),
+            "humi_hw": humidity_hw.getattr("value"),
+            "vcc_bar_sensor": self.ads1115.get_sensor_raw_value_as_dict(),
+            "temp_bar_sensor": self.pt100.get_sensor_raw_value_as_dict(),
+            "power_supply": self.pac1945.get_sensor_raw_value_as_dict(),
             "external_alarms": {
-                "barra_in": self.barra_in.get_value(),
+                "bar_in": self.barra_in.get_value(),
                 "pta1": self.pta1.get_value(),
                 "pta2": self.pta2.get_value()
             }
