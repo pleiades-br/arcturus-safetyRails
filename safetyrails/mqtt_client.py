@@ -23,12 +23,13 @@ def on_message(client, userdata, message):
 
 
 def on_connect(client, userdata, flags, rc):
-    print(f"On connect: {str(rc)}")
+    print(f"On connect: {str(rc)} ")
 
 
 
 def on_publish(client, userdata, mid):
     try:
+        print(f"Message {mid} published")
         userdata.remove(mid)
     except Exception as error:
         print(f"We have and error on removing the message {mid} from list. Error {error}")
@@ -57,13 +58,11 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     mqttc.username_pw_set(mqtt_config['username'], mqtt_config['password'])
 
     while not stop_event.is_set():
-        print(hwboard.get_all_sensors_values_as_json())
-        print("==============JSON==============")
-        print(json.dumps(hwboard.get_all_sensors_values_as_json()))
+        msg = json.dumps(hwboard.get_all_sensors_values_as_json()))
         if mqtt_config['host'] and mqtt_config['port'] and mqtt_config['topic']:
             mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
             mqttc.loop_start()
-            msg_info = mqttc.publish(mqtt_config['topic'], "my message", qos=2)
+            msg_info = mqttc.publish(mqtt_config['topic'], msg , qos=2)
             unacked_msg.add(msg_info.mid)
             msg_info.wait_for_publish()
 
