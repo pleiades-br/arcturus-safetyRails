@@ -48,6 +48,7 @@ class Shtc3(Sensor):
             return error
 
     def __update_temperature_data(self):
+        print(self.__temperature)
         value = self.__get_driver_data(os.path.join(self.__dirpath,
                                                     getattr(self.__temperature, "raw_file")))
         if isinstance(value, int):

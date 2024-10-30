@@ -67,7 +67,7 @@ class HWBoard():
 
     def get_all_sensors_values_as_json(self) -> str:
         """
-        Get all sensors value and return in a json format
+        Get all sensors value and return as json format
         Returns:
             str: all sensors in json format
         """
