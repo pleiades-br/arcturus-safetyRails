@@ -17,8 +17,8 @@ class Shtc3(Sensor):
 
     def __init__(self, sensor_name: str) -> None:
         super().__init__(sensor_name)
-        self.__temperature: SensorData(name="Temperature", raw_file=self.TEMPERATURE_FILE)
-        self.__humidity: SensorData(name="Humidity", raw_file=self.HUMIDITY_FILE)
+        self.__temperature = SensorData(name="Temperature", raw_file=self.TEMPERATURE_FILE)
+        self.__humidity = SensorData(name="Humidity", raw_file=self.HUMIDITY_FILE)
         self.__dirpath: str = ""
         self.__get_dirpath()
 
