@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 
 
 
-def on_subscribe(client, userdata, mid, granted_qos ):
+def on_subscribe(client, userdata, mid, granted_qos):
     # Since we subscribed only for a single channel, reason_code_list contains
     # a single entry
     pass
@@ -23,8 +23,7 @@ def on_message(client, userdata, message):
 
 
 def on_connect(client, userdata, flags, rc):
-    if rc.is_failure:
-        print(f"Failed to connect: {rc}. loop_forever() will retry connection")
+    print(f"On connect: {str(rc)}")
 
 
 

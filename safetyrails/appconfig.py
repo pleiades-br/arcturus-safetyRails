@@ -26,11 +26,11 @@ class SftrailsConfig():
     CONFIG_PATH_FILE='/etc/sftrails/sftrails.conf'
     default_config = {
         'MQTT': {
-            'host':'',
+            'host':'paulozulato-amazon.duckdns.org',
             'port':1883,
             'username':'',
             'password':'',
-            'topic':'',
+            'topic':'arc',
             'sleep_timer_s': 60,
         },
 
