@@ -52,24 +52,28 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
         stop_event (Event): Event that inidicate to exit the loop and finish the function
     """
     mqtt_config = config.get_mqtt_config()
-    print(mqtt_config)
 
-    #mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    #mqttc.on_connect = on_connect
-    #mqttc.on_message = on_message
-    #mqttc.on_subscribe = on_subscribe
-    #mqttc.on_unsubscribe = on_unsubscribe
-    #mqttc.on_publish = on_publish
+    mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    mqttc.on_connect = on_connect
+    mqttc.on_message = on_message
+    mqttc.on_subscribe = on_subscribe
+    mqttc.on_unsubscribe = on_unsubscribe
+    mqttc.on_publish = on_publish
+    print(hwboard.get_all_sensors_values_as_json())
+"""     unacked_msg = set()
+    mqttc.user_data_set(unacked_msg)
+    mqttc.username_pw_set(mqtt_config['username'], mqtt_config['password'])
 
-    #unacked_msg = set()
-    #mqttc.user_data_set(unacked_msg)
-    #mqttc.connect("mqtt.eclipseprojects.io")
-    #mqttc.loop_start()
-    #while not stop_event.is_set():
-        #msg = hwboard
-        #msg_info = mqttc.publish("paho/test/topic", "my message", qos=1)
-        #unacked_msg.add(msg_info.mid)
-     #   msg_info.wait_for_publish()
 
-    #mqttc.disconnect()
-    #mqttc.loop_stop()
+    while not stop_event.is_set():
+        mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
+        mqttc.loop_start()
+        
+        msg = hwboard
+        msg_info = mqttc.publish(mqtt_config['topic'], "my message", qos=1)
+        unacked_msg.add(msg_info.mid)
+        msg_info.wait_for_publish()
+
+        mqttc.disconnect()
+        mqttc.loop_stop()
+        time.sleep(int(mqtt_config['sleep_timer_s'])) """

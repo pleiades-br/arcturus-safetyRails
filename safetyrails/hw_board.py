@@ -65,7 +65,7 @@ class HWBoard():
         self.pta1 = HWGpio(4, 6, "PTA1")
         self.pta2 = HWGpio(4, 4, "PTA2")
 
-    def sensors_values_to_json(self) -> str:
+    def get_all_sensors_values_as_json(self) -> str:
         """
         Get all sensors value and return in a json format
         Returns:
