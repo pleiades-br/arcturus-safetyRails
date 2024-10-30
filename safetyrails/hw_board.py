@@ -79,11 +79,11 @@ class HWBoard():
         sensors_data = {
             "temp_hw": temperature_hw.to_json("value"),
             "humi_hw": humidity_hw.to_json("value"),
-            "external_sensors": {
+            "external_sensors": [
                 [channel.to_dict_name_raw_value() for channel in ads_channels],
                 [channel.to_dict_name_raw_value() for channel in pta_channels],
                 [channel.to_dict_name_raw_value() for channel in pac_channels]
-            },
+            ],
             "external_alarms": {
                 "barra_in": self.barra_in.get_value(),
                 "pta1": self.pta1.get_value(),
