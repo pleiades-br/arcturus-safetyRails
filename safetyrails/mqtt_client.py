@@ -71,5 +71,5 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
             mqttc.disconnect()
             mqttc.loop_stop()
 
-   
+
         time.sleep(int(mqtt_config['sleep_timer_s']))

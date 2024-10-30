@@ -81,6 +81,4 @@ class Shtc3(Sensor):
         Returns:
              float: temperature and humidity
         """
-        self.__update_temperature_data()
-        self.__update_humidity_data()
         return self.__temperature, self.__humidity
