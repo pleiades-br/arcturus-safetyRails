@@ -20,12 +20,16 @@ def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
 
     while not stop_event.is_set():
         with hwboard.shtc3.lock:
+            hwboard.shtc3.update_sensor_data()
             print(hwboard.shtc3.get_sensor_data())
         with hwboard.pac1945.lock:
+            hwboard.pac1945.update_sensor_data()
             print(hwboard.pac1945.get_sensor_data())
         with hwboard.ads1115.lock:
+            hwboard.ads1115.update_sensor_data()
             print(hwboard.ads1115.get_sensor_data())
         with hwboard.pt100.lock:
+            hwboard.pt100.update_sensor_data()
             print(hwboard.pt100.get_sensor_data())
         time.sleep(sleep_time)
 

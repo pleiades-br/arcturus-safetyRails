@@ -48,7 +48,6 @@ class Shtc3(Sensor):
             return error
 
     def __update_temperature_data(self):
-        print(self.__temperature)
         value = self.__get_driver_data(os.path.join(self.__dirpath,
                                                     getattr(self.__temperature, "raw_file")))
         if isinstance(value, int):
@@ -64,9 +63,20 @@ class Shtc3(Sensor):
             setattr(self.__humidity, "raw_value", value)
             setattr(self.__humidity, "value", float(value / 1000))
 
+    def update_sensor_data(self):
+        """
+        Update sensor data
+        """
+        try:
+            self.__update_temperature_data()
+            self.__update_humidity_data()
+        except Exception as error:
+            print (f'SHTC3 - could not update sensor data. Error {type(error).__name__} - {error}')
+        
+
     def get_sensor_data(self):
         """ 
-        Get an update sensor data
+        Get sensor data
             
         Returns:
              float: temperature and humidity

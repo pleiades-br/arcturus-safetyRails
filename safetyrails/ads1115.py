@@ -63,7 +63,10 @@ class Ads1115(Sensor):
 
             self.__channels.append(channel)
 
-    def __update_data(self):
+    def update_sensor_data(self):
+        """
+        Update sensor data
+        """
         for channel in self.__channels:
             try:
                 channel_file = os.path.join(self.__dirpath, channel.raw_file)
@@ -75,10 +78,9 @@ class Ads1115(Sensor):
                 continue
 
     def get_sensor_data(self):
-        """ Get an update sensor data
+        """ Get  sensor data
             
         Returns:
             dictionary: containing the raw and input data from the sensor.
         """
-        self.__update_data()
         return self.__channels
