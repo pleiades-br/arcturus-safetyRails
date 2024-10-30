@@ -56,7 +56,7 @@ class Pt100(Sensor):
                 continue
 
             channel = SensorData(name=entry["name"])
-            if 'ch2' in entry:    
+            if 'ch2' in entry:
                 channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
                 channel.raw_file = self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
                 channel.input_file = self.MUX_INPUT_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
