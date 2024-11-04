@@ -17,8 +17,7 @@ class Pt100(Sensor):
         FileNotFound: When could not find the ads122c04 inside /sys
     """
     NAME="""AIN{mux1}_AVSS"""
-    RAW_FILE="""in_voltage{mux1}_raw"""
-    INPUT_FILE="""in_voltage{mux1}_input"""
+    FILE="""in_voltage{mux1}_{filetype}"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
     MUX_FILE="""in_voltage{mux1}-voltage{mux2}_{filetype}"""
 
@@ -65,9 +64,9 @@ class Pt100(Sensor):
                                                           filetype="scale")
             else:
                 channel.hw_name = self.NAME.format(mux1=entry['ch1'])
-                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="raw")
-                channel.input_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="input")
-                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="scale")
+                channel.raw_file = self.FILE.format(mux1=entry['ch1'], filetype="raw")
+                channel.input_file = self.FILE.format(mux1=entry['ch1'], filetype="input")
+                channel.scale_file = self.FILE.format(mux1=entry['ch1'], filetype="scale")
 
             self.__channels.append(channel)
 
@@ -88,7 +87,7 @@ class Pt100(Sensor):
 
                 with open(channel_scale_file,'r') as file: 
                     channel.scale_value = float(file.read().strip())
-                    
+
             except Exception:
                 print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
                 continue

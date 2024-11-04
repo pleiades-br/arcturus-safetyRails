@@ -18,7 +18,7 @@ class Ads1115(Sensor):
     """
 
     NAME="""AIN{mux1}"""
-    RAW_FILE="""in_voltage{mux1}_raw"""
+    FILE="""in_voltage{mux1}_{filetype}"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
     MUX_FILE="""in_voltage{mux1}-voltage{mux2}_{filetype}"""
 
@@ -62,8 +62,8 @@ class Ads1115(Sensor):
                                                         filetype="scale")
             else:
                 channel.hw_name = self.NAME.format(mux1=entry['ch1'])
-                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="raw")
-                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="scale")
+                channel.raw_file = self.FILE.format(mux1=entry['ch1'], filetype="raw")
+                channel.scale_file = self.FILE.format(mux1=entry['ch1'], filetype="scale")
 
             self.__channels.append(channel)
 
