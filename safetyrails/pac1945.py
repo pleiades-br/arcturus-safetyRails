@@ -18,7 +18,8 @@ class Pac1945(Sensor):
     """
 
     NAME="""AIN{mux1}"""
-    RAW_FILE="""in_voltage{mux1}_raw"""
+    FILE="""in_voltage{mux1}_{filetype}"""
+
 
     def __init__(self, sensor_name: str, config: list) -> None:
         super().__init__(sensor_name)
@@ -54,7 +55,8 @@ class Pac1945(Sensor):
             channel = SensorData( 
                 name=entry['name'],
                 hw_name=self.NAME.format(mux1=entry['ch1']),
-                raw_file=self.RAW_FILE.format(mux1=entry['ch1'])
+                raw_file=self.FILE.format(mux1=entry['ch1'],filetype="raw"),
+                scale_file=self.FILE.format(mux1=entry['ch1'],filetype="scale"),
             )
 
             self.__channels.append(channel)
@@ -64,14 +66,25 @@ class Pac1945(Sensor):
         Update sensor data
         """
         for channel in self.__channels:
-            channel_file = os.path.join(self.__dirpath, channel.raw_file)
+            raw_file = os.path.join(self.__dirpath, channel.raw_file)
+            scale_file = os.path.join(self.__dirpath, channel.scale_file)
             try:
-                with open(channel_file,'r') as file: 
+                with open(raw_file,'r') as file: 
                     channel.raw_value = int(file.read().strip())
 
             except Exception:
                 print(f"Pac1945 could not take data from {channel.name}")
                 continue
+
+            try:
+                with open(scale_file,'r') as file: 
+                    channel.scale_value = float(file.read().strip())
+
+            except Exception:
+                print(f"Pac1945 could not take data from {channel.name}")
+                continue
+
+            channel.value = channel.raw_value * channel.scale_value
 
     def get_sensor_data(self):
         """ Get sensor data

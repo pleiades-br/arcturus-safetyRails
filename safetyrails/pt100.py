@@ -20,8 +20,7 @@ class Pt100(Sensor):
     RAW_FILE="""in_voltage{mux1}_raw"""
     INPUT_FILE="""in_voltage{mux1}_input"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
-    MUX_RAW_FILE="""in_voltage{mux1}-voltage{mux2}_raw"""
-    MUX_INPUT_FILE="""in_voltage{mux1}-voltage{mux2}_input"""
+    MUX_FILE="""in_voltage{mux1}-voltage{mux2}_{filetype}"""
 
     def __init__(self, sensor_name: str, config: list) -> None:
         super().__init__(sensor_name)
@@ -58,12 +57,17 @@ class Pt100(Sensor):
             channel = SensorData(name=entry["name"])
             if 'ch2' in entry:
                 channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
-                channel.raw_file = self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
-                channel.input_file = self.MUX_INPUT_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
+                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
+                                                        filetype="raw")
+                channel.input_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
+                                                          filetype="input")
+                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
+                                                          filetype="scale")
             else:
                 channel.hw_name = self.NAME.format(mux1=entry['ch1'])
-                channel.raw_file = self.RAW_FILE.format(mux1=entry['ch1'])
-                channel.input_file = self.INPUT_FILE.format(mux1=entry['ch1'])
+                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="raw")
+                channel.input_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="input")
+                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="scale")
 
             self.__channels.append(channel)
 
@@ -74,18 +78,19 @@ class Pt100(Sensor):
         for channel in self.__channels:
             try:
                 channel_raw_file = os.path.join(self.__dirpath, channel.raw_file)
+                channel_input_file = os.path.join(self.__dirpath, channel.input_file)
+                channel_scale_file = os.path.join(self.__dirpath, channel.scale_file)
                 with open(channel_raw_file,'r') as file: 
                     channel.raw_value = int(file.read().strip())
-            except Exception:
-                print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
-                continue
-
-            try:
-                channel_input_file = os.path.join(self.__dirpath, channel.input_file)
+                    
                 with open(channel_input_file,'r') as file: 
                     channel.input_value = int(file.read().strip())
+
+                with open(channel_scale_file,'r') as file: 
+                    channel.scale_value = float(file.read().strip())
+                    
             except Exception:
-                print(f"PT100 could not take data from {channel.name} using {channel.input_file}")
+                print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
                 continue
 
     def get_sensor_data(self):

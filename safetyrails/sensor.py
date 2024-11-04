@@ -14,6 +14,8 @@ class SensorData():
     raw_value: int = 0
     input_file: str = ""
     input_value: int = 0
+    scale_file: str = ""
+    scale_value: float = 0
     value: float = 0   # converted value
     offset: int = 0
 

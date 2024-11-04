@@ -20,7 +20,7 @@ class Ads1115(Sensor):
     NAME="""AIN{mux1}"""
     RAW_FILE="""in_voltage{mux1}_raw"""
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
-    MUX_RAW_FILE="""in_voltage{mux1}-voltage{mux2}_raw"""
+    MUX_FILE="""in_voltage{mux1}-voltage{mux2}_{filetype}"""
 
     def __init__(self, sensor_name: str, config: list) -> None:
         super().__init__(sensor_name)
@@ -56,10 +56,14 @@ class Ads1115(Sensor):
             channel = SensorData(name=entry["name"])
             if 'ch2' in entry:    
                 channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
-                channel.raw_file = self.MUX_RAW_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'])
+                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'], 
+                                                        filetype="raw")
+                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'], 
+                                                        filetype="scale")
             else:
                 channel.hw_name = self.NAME.format(mux1=entry['ch1'])
-                channel.raw_file = self.RAW_FILE.format(mux1=entry['ch1'])
+                channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="raw")
+                channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], filetype="scale")
 
             self.__channels.append(channel)
 
@@ -69,9 +73,16 @@ class Ads1115(Sensor):
         """
         for channel in self.__channels:
             try:
-                channel_file = os.path.join(self.__dirpath, channel.raw_file)
-                with open(channel_file, 'r') as file:
+                raw_file = os.path.join(self.__dirpath, channel.raw_file)
+                scale_file = os.path.join(self.__dirpath, channel.scale_file)
+                with open(raw_file, 'r') as file:
                     channel.raw_value = int(file.read().strip())
+
+                with open(scale_file, 'r') as file:
+                    channel.scale_value = float(file.read().strip())
+
+                # ±2.048 V 62.5 μV section 9.3.3 ads1115 datasheet
+                channel.value = channel.raw_value * channel.scale_value
 
             except Exception:
                 print(f"Ads1115 could not take data from {channel.name}")
