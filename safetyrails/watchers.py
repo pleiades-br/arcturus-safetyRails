@@ -6,6 +6,15 @@ from hw_board import HWBoard
 from appconfig import SftrailsConfig, SftrailsSensorTimers
 
 
+def print_channels_as_json(channel_list: list):
+    """
+        Just print a list as json
+    Args:
+        channel_list (list): list of adc channel to print
+    """
+    for channel in channel_list:
+        print(json.dumps(asdict(channel), indent=4))
+
 
 def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     """
@@ -28,13 +37,13 @@ def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
             print(json.dumps(asdict(humi), indent=4))
         with hwboard.pac1945.lock:
             hwboard.pac1945.update_sensor_data()
-            print(json.dumps(asdict(hwboard.pac1945.get_sensor_data()), indent=4))
+            print_channels_as_json(hwboard.pac1945.get_sensor_data())
         with hwboard.ads1115.lock:
             hwboard.ads1115.update_sensor_data()
-            print(json.dumps(asdict(hwboard.ads1115.get_sensor_data()), indent=4))
+            print_channels_as_json(hwboard.ads1115.get_sensor_data())
         with hwboard.pt100.lock:
             hwboard.pt100.update_sensor_data()
-            print(json.dumps(asdict(hwboard.pt100.get_sensor_data()), indent=4))
+            print_channels_as_json(hwboard.pt100.get_sensor_data())
         time.sleep(sleep_time)
 
 

@@ -15,7 +15,6 @@ class SensorData():
     scale_file: str = ""
     scale_value: float = 0
     value: float = 0   # converted value
-    offset: int = 0
 
     def to_dict(self, include: list = None) -> dict:
         """
