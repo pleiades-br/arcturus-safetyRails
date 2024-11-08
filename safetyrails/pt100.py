@@ -58,14 +58,11 @@ class Pt100(Sensor):
                 channel.hw_name = self.MUX_NAME.format(mux1=entry['ch1'], mux2=entry['ch2'])
                 channel.raw_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
                                                         filetype="raw")
-                channel.input_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
-                                                          filetype="input")
                 channel.scale_file = self.MUX_FILE.format(mux1=entry['ch1'], mux2=entry['ch2'],
                                                           filetype="scale")
             else:
                 channel.hw_name = self.NAME.format(mux1=entry['ch1'])
                 channel.raw_file = self.FILE.format(mux1=entry['ch1'], filetype="raw")
-                channel.input_file = self.FILE.format(mux1=entry['ch1'], filetype="input")
                 channel.scale_file = self.FILE.format(mux1=entry['ch1'], filetype="scale")
 
             self.__channels.append(channel)
@@ -77,13 +74,9 @@ class Pt100(Sensor):
         for channel in self.__channels:
             try:
                 channel_raw_file = os.path.join(self.__dirpath, channel.raw_file)
-                channel_input_file = os.path.join(self.__dirpath, channel.input_file)
                 channel_scale_file = os.path.join(self.__dirpath, channel.scale_file)
                 with open(channel_raw_file,'r') as file: 
                     channel.raw_value = int(file.read().strip())
-                    
-                with open(channel_input_file,'r') as file: 
-                    channel.input_value = int(file.read().strip())
 
                 with open(channel_scale_file,'r') as file: 
                     channel.scale_value = float(file.read().strip())

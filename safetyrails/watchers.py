@@ -1,7 +1,9 @@
 import time
+import os_shared
+import json
+from dataclasses import dataclass, asdict
 from hw_board import HWBoard
 from appconfig import SftrailsConfig, SftrailsSensorTimers
-import os_shared
 
 
 
@@ -21,16 +23,18 @@ def sensors_watchdog(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     while not stop_event.is_set():
         with hwboard.shtc3.lock:
             hwboard.shtc3.update_sensor_data()
-            print(hwboard.shtc3.get_sensor_data())
+            temp, humi = hwboard.shtc3.get_sensor_data()
+            print(json.dumps(asdict(temp), indent=4))
+            print(json.dumps(asdict(humi), indent=4))
         with hwboard.pac1945.lock:
             hwboard.pac1945.update_sensor_data()
-            print(hwboard.pac1945.get_sensor_data())
+            print(json.dumps(asdict(hwboard.pac1945.get_sensor_data()), indent=4))
         with hwboard.ads1115.lock:
             hwboard.ads1115.update_sensor_data()
-            print(hwboard.ads1115.get_sensor_data())
+            print(json.dumps(asdict(hwboard.ads1115.get_sensor_data()), indent=4))
         with hwboard.pt100.lock:
             hwboard.pt100.update_sensor_data()
-            print(hwboard.pt100.get_sensor_data())
+            print(json.dumps(asdict(hwboard.pt100.get_sensor_data()), indent=4))
         time.sleep(sleep_time)
 
 
