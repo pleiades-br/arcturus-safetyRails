@@ -40,7 +40,7 @@ class HWBoard():
                                     },
                                     {
                                         'name': "solar_cel",
-                                        'ch1': 2,                                        
+                                        'ch1': 4,                                        
                                     },
                                ])
 
