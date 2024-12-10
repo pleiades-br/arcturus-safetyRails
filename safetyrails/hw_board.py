@@ -1,5 +1,6 @@
 import threading
 import json
+import os
 from ads1115 import Ads1115
 from pac1945 import Pac1945
 from pt100 import Pt100
@@ -9,6 +10,8 @@ from hwgpio import HWGpio
 
 
 class HWBoard():
+    SENSOR_DATA_PATH = "/tmp/safetyrails/"
+    SENSOR_DATA_FILE = "/tmp/safetyrails/sensordata"
     """
         This is the HWBoard for the sense Arcturus
         Containing all the sensors and gpios that need to watch
@@ -60,6 +63,10 @@ class HWBoard():
         self.pta1 = HWGpio(4, 6, "PTA1")
         self.pta2 = HWGpio(4, 4, "PTA2")
         self.__update_all_sensors()
+        try:
+            os.mkdir(self.SENSOR_DATA_PATH)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def __update_all_sensors(self):
         """
@@ -92,3 +99,11 @@ class HWBoard():
         }
 
         return json.dumps(sensors_data)
+    
+    def save_data_to_sensor_tmp_file(self):
+        try:
+            with open(self.SENSOR_DATA_FILE, 'w') as file:
+                sensor_data = self.get_all_sensors_values_as_json()
+                json.dump(sensor_data, file, indent=4)
+        except Exception as e:
+            print(f"Not possible to save sensor data on tmp file: {e}")
