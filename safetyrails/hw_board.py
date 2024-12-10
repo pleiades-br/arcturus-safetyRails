@@ -88,9 +88,9 @@ class HWBoard():
         sensors_data = {
             "temp_hw": temperature_hw.value,
             "humi_hw": humidity_hw.value,
-            "vcc_bar_sensor": self.ads1115.get_sensor_raw_value_as_dict(),
+            "vcc_bar_sensor": self.ads1115.get_sensor_value_as_dict(),
             "temp_bar_sensor": self.pt100.get_sensor_raw_value_as_dict(),
-            "power_supply": self.pac1945.get_sensor_raw_value_as_dict(),
+            "power_supply": self.pac1945.get_sensor_value_as_dict(),
             "external_alarms": {
                 "bar_in": self.barra_in.get_value(),
                 "pta1": self.pta1.get_value(),
