@@ -86,15 +86,15 @@ class HWBoard():
         temperature_hw, humidity_hw = self.shtc3.get_sensor_data()
 
         sensors_data = {
-            "temp_hw": temperature_hw.value,
-            "humi_hw": humidity_hw.value,
-            "vcc_bar_sensor": self.ads1115.get_sensor_value_as_dict(),
-            "temp_bar_sensor": self.pt100.get_sensor_raw_value_as_dict(),
-            "power_supply": self.pac1945.get_sensor_value_as_dict(),
-            "external_alarms": {
-                "bar_in": self.barra_in.get_value(),
-                "pta1": self.pta1.get_value(),
-                "pta2": self.pta2.get_value()
+            'temp_hw': temperature_hw.value,
+            'humi_hw': humidity_hw.value,
+            'vcc_bar_sensor': self.ads1115.get_sensor_value_as_dict(),
+            'temp_bar_sensor': self.pt100.get_sensor_raw_value_as_dict(),
+            'power_supply': self.pac1945.get_sensor_value_as_dict(),
+            'external_alarms': {
+                'bar_in': self.barra_in.get_value(),
+                'pta1': self.pta1.get_value(),
+                'pta2': self.pta2.get_value()
             }
         }
 
@@ -102,8 +102,8 @@ class HWBoard():
     
     def save_data_to_sensor_tmp_file(self):
         try:
-            with open(self.SENSOR_DATA_FILE, 'w') as file:
+            with open(self.SENSOR_DATA_FILE, 'w') as json_file:
                 sensor_data = self.get_all_sensors_values_as_json()
-                json.dump(sensor_data, file, indent=4)
+                json.dump(sensor_data, json_file)
         except Exception as e:
             print(f"Not possible to save sensor data on tmp file: {e}")

@@ -99,11 +99,11 @@ class Pac1945(Sensor):
         Return a dictionary with the name of channel as key
         and the raw_value as value
         """
-        return {channel.name: channel.raw_value for channel in self.__channels}
+        return {f'{channel.name}': channel.raw_value for channel in self.__channels}
     
     def get_sensor_value_as_dict(self):
         """
         Return a dictionary with the name of channel as key
         and the raw_value as value
         """
-        return {channel.name: channel.value for channel in self.__channels}
+        return {f'{channel.name}': channel.value for channel in self.__channels}
