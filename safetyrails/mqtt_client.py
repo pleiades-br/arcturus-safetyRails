@@ -58,12 +58,12 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     mqttc.username_pw_set(mqtt_config['username'], mqtt_config['password'])
 
     while not stop_event.is_set():
-        msg = hwboard.get_all_sensors_values_as_json()
+        sensor_data = hwboard.get_all_sensors_values_as_json()
         if mqtt_config['host'] and mqtt_config['port'] and mqtt_config['topic']:
             try:
                 mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
                 mqttc.loop_start()
-                msg_info = mqttc.publish(mqtt_config['topic'], msg , qos=2)
+                msg_info = mqttc.publish(mqtt_config['topic'], json.dumps(sensor_data) , qos=2)
                 unacked_msg.add(msg_info.mid)
                 msg_info.wait_for_publish()
                 mqttc.disconnect()

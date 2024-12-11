@@ -77,28 +77,40 @@ class HWBoard():
         self.pt100.update_sensor_data()
         self.pac1945.update_sensor_data()
 
-    def get_all_sensors_values_as_json(self) -> str:
+    def get_all_sensors_values_as_json(self) -> dict:
         """
         Get all sensors value and return as json format
         Returns:
             str: all sensors in json format
         """
         temperature_hw, humidity_hw = self.shtc3.get_sensor_data()
+        bar_sensor = self.ads1115.get_sensor_value_as_dict()
+        temp_bar_sensor =  self.pt100.get_sensor_raw_value_as_dict()
+        power_sensor = self.pac1945.get_sensor_value_as_dict()
 
         sensors_data = {
-            'temp_hw': temperature_hw.value,
-            'humi_hw': humidity_hw.value,
-            'vcc_bar_sensor': self.ads1115.get_sensor_value_as_dict(),
-            'temp_bar_sensor': self.pt100.get_sensor_raw_value_as_dict(),
-            'power_supply': self.pac1945.get_sensor_value_as_dict(),
-            'external_alarms': {
-                'bar_in': self.barra_in.get_value(),
-                'pta1': self.pta1.get_value(),
-                'pta2': self.pta2.get_value()
+            'rail' : {
+                'bar_alarm' : self.barra_in.get_value(),
+                'bar_vcc': bar_sensor["vcc_bar"],
+                'temp': temp_bar_sensor["temperature_bar_ch1"]
+            },
+
+            'power' : {
+                'batt': power_sensor["battery"],
+                'solar': power_sensor["solar_cel"]
+            },
+
+            'hw' : {
+                'temp': temperature_hw.value,
+                'humi': humidity_hw.value,
+                'j3_vcc': bar_sensor["input_j3"],
+                'j4_vcc': bar_sensor["input_j4"],
+                'pta1_alarm': self.pta1.get_value(),
+                'pta2_alarm': self.pta2.get_value(),
             }
         }
 
-        return json.dumps(sensors_data)
+        return sensors_data
     
     def save_data_to_sensor_tmp_file(self):
         try:
