@@ -34,7 +34,26 @@ def on_publish(client, userdata, mid):
     except Exception as error:
         print(f"We have and error on removing the message {mid} from list. Error {error}")
 
+def save_data_to_mqtt_tmp_file(mqtt_config: dict, conn_status: bool):
+    """
+    Function to save data to be used for other applications
 
+    Args:
+        mqtt_config (dictionary): mqtt config
+        conn_status (bool): connection status
+    """
+    try:
+        with open('/tmp/safetyrails/mqtt','w') as mqtt_file:
+            mqtt_dict = {
+                'conn_status': conn_status,
+                'server_addr': mqtt_config["host"],
+                'server_port': mqtt_config["port"],
+                'server_topic': mqtt_config["topic"],
+                'username': mqtt_config["username"],
+            }
+            json.dump(mqtt_dict, mqtt_file)
+    except Exception as error:
+        print(f"Failed to open mqtt tmp file. Error; {error}")
 
 def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
     """
@@ -59,6 +78,7 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
 
     while not stop_event.is_set():
         sensor_data = hwboard.get_all_sensors_values_as_json()
+        conn_status = False
         if mqtt_config['host'] and mqtt_config['port'] and mqtt_config['topic']:
             try:
                 mqttc.connect(host=mqtt_config['host'], port=int(mqtt_config['port']))
@@ -68,8 +88,11 @@ def mqtt_thread(hwboard: HWBoard, config: SftrailsConfig, stop_event):
                 msg_info.wait_for_publish()
                 mqttc.disconnect()
                 mqttc.loop_stop()
+                conn_status = True
             except Exception as error:
                 print(f"MQTT Client - Trror trying to send package \
                       Error {type(error).__name__} - {error}")
+                
+        save_data_to_mqtt_tmp_file(mqtt_config, conn_status)
 
         time.sleep(int(mqtt_config['sleep_timer_s']))
