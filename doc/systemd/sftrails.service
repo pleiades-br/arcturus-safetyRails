@@ -1,0 +1,13 @@
+[Unit]
+Description=Arcturus Safety Rails service
+After=lighttpd.service
+
+[Service]
+PIDFile=/run/sftrails.pid
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/sftrails
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
