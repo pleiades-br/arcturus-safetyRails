@@ -55,6 +55,13 @@ class SftrailsConfig():
             'wav_file4': '',
             'wav_file5': '',
         },
+
+        'PT100 Config': {
+            'min_temp': -250,
+            'max_temp': 650,
+            'ohms_at_min_temp': 18,
+            'ohms_at_max_temp': 330,
+        },
     }
 
     def __init__(self, file_path: str = ''):
@@ -146,3 +153,10 @@ class SftrailsConfig():
         Return the mqtt config as dictionary 
         """
         return dict(self.config['MQTT'])
+
+
+    def get_pt100_config(self):
+        """
+        Return the pt100 config as dictionary 
+        """
+        return dict(self.config['PT100 Config'])
