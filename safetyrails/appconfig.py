@@ -59,8 +59,10 @@ class SftrailsConfig():
         'PT100 Config': {
             'min_temp': -250,
             'max_temp': 650,
-            'ohms_at_min_temp': 18,
-            'ohms_at_max_temp': 330,
+            'rtd_min': 18,
+            'rtd_max': 330,
+            'rlead_min': 0,
+            'rlead_max': 15,
         },
     }
 
