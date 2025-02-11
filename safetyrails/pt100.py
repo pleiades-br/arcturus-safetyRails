@@ -120,14 +120,14 @@ class Pt100(Sensor):
         v_in = self.__calculate_vin(
             (self.__pt100_config["rlead_min"] + self.__pt100_config["rlead_max"]) / 2,
              rtd)
-        
+        temp_min = self.__pt100_config["min_temp"]
         print(f"**** PT100 Calculation ***** \
                 RTD = {rtd}; \n \
                 v_min = {v_min}; \n \
                 v_max = {v_max}; \n \
                 linear_const = {linear_const}; \n \
                 v_in = {v_in}; \n \
-                min_temp = {self.__pt100_config["min_temp"]}\n")
+                min_temp = {temp_min}\n")
         channel.value = self.__pt100_config["min_temp"] + linear_const * (v_in - v_min)
 
 
