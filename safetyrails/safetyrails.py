@@ -29,7 +29,7 @@ def main():
     '''
     stop_event = threading.Event()
     appconf = SftrailsConfig(file_path=argument_parser())
-    hwboard = HWBoard()
+    hwboard = HWBoard(appconf.get_pt100_config())
 
     thread1 = threading.Thread(target=rail_gpio_watchdog, args=(hwboard, appconf, stop_event))
     thread2 = threading.Thread(target=sensors_watchdog, args=(hwboard, appconf, stop_event))

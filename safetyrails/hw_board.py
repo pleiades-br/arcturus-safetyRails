@@ -17,7 +17,7 @@ class HWBoard():
         Containing all the sensors and gpios that need to watch
         for the main application 
     """
-    def __init__(self) -> None:
+    def __init__(self, pt100_config: dict) -> None:
         self.ads1115 = Ads1115("ADS1115",
                                [
                                     {
@@ -54,7 +54,8 @@ class HWBoard():
                                     'ch1': 1,
                                     'ch2': 0,
                                 },
-                            ])
+                            ], 
+                            pt100_config)
 
         self.shtc3 = Shtc3("SHTC3")
         self.gpio_lock = threading.Lock()

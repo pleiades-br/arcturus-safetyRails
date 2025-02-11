@@ -21,12 +21,13 @@ class Pt100(Sensor):
     MUX_NAME="""AIN{mux1}_AIN{mux2}"""
     MUX_FILE="""in_voltage{mux1}-voltage{mux2}_{filetype}"""
 
-    def __init__(self, sensor_name: str, config: list) -> None:
+    def __init__(self, sensor_name: str, config: list, pt100_config: dict) -> None:
         super().__init__(sensor_name)
         self.__channels: list = []
         self.__dirpath: str = ""
         self.__get_dirpath()
         self.__create_channel_list(config)
+        self.__pt100_config = pt100_config
 
     def __get_dirpath(self):
         for dirs in os.listdir(LINUX_SYS_I2C_PATH):
@@ -70,6 +71,8 @@ class Pt100(Sensor):
     def update_sensor_data(self):
         """
         Update sensor data
+        Args:
+            pt100_config(dict): Pt100 config for temperature calculation 
         """
         for channel in self.__channels:
             try:
@@ -80,6 +83,8 @@ class Pt100(Sensor):
 
                 with open(channel_scale_file,'r') as file: 
                     channel.scale_value = float(file.read().strip())
+
+                self.__calculate_converted_value(channel)
 
             except Exception:
                 print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
@@ -92,11 +97,72 @@ class Pt100(Sensor):
             dictionary: containing the raw and input data from the sensor.
         """
         return self.__channels
-    
+
     def get_sensor_raw_value_as_dict(self):
         """
         Return a dictionary with the name of channel as key
         and the raw_value as value
         """
         return {f'{channel.name}': channel.raw_value for channel in self.__channels}
+    
+    def __calculate_converted_value(self,channel: SensorData):
+        rtd = self.__calculate_rtd(channel.raw_value)
+        v_min = self.__calculate_vin(self.__pt100_config["rlead_min"],
+                                     self.__pt100_config["rtd_min"])
+        v_max = self.__calculate_vin(self.__pt100_config["rlead_max"],
+                                     self.__pt100_config["rtd_max"])
+        
+        linear_const = self.__calculate_linear_interpolation_const(v_min,
+                                                                   self.__pt100_config["min_temp"],
+                                                                   v_max,
+                                                                   self.__pt100_config["max_temp"])
+        
+        v_in = self.__calculate_vin(
+            (self.__pt100_config["rlead_min"] + self.__pt100_config["rlead_max"]) / 2,
+             rtd)
+        
+        print(f"**** PT100 Calculation ***** \
+                RTD = {rtd}; \n \
+                v_min = {v_min}; \n \
+                v_max = {v_max}; \n \
+                linear_const = {linear_const}; \n \
+                v_in = {v_in}; \n \
+                min_temp = {self.__pt100_config["min_temp"]}\n")
+        channel.value = self.__pt100_config["min_temp"] + linear_const * (v_in - v_min)
 
+
+    def __calculate_linear_interpolation_const(self, min: float, temp_min: int,
+                                               max: float, temp_max: int):
+        """
+        Calculte the linear constant that could be different acording pt100 config
+        Args:
+            min (float): value (voltage or resistance) whean temperature reaches the minimal value
+            temp_min (int): conifgured temperature minimal value in celsius
+            max (float): value (voltage or resistance) whean temperature reaches the maximun value
+            temp_max (int): conifgured temperature maximun value in celsius
+        """
+        return (temp_max - temp_min) / (max - min)
+    
+    def __calculate_vin(self, rlead: float , rtd: float):
+        """
+        Calculate the voltage when the temperature reaches the minimal
+        V (MAX) = VREF + (Idac1 + Idac2) · Rlead + idac1 · (Rlead + Rrtd) 
+        idac1 = idac2 = 500mV
+        Args:
+            rlead (float): Resistance value of the wire at determined temperature
+            rtd (float): Resistance of the reference resistor at determined temperature
+
+        Returns:
+            float: the voltage at temperature
+        """
+        return (2500 + rlead + 0.5 * (rlead + rtd))
+
+    def __calculate_rtd(self, raw_value: int):
+        return ((2500 * raw_value)/ (2**22 * 8))
+
+    def get_sensor_values_as_dict(self):
+        """
+        Return a dictionary with the name of channel as key
+        and the converted value
+        """
+        return {f'{channel.name}': channel.value for channel in self.__channels}
