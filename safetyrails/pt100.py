@@ -86,8 +86,9 @@ class Pt100(Sensor):
 
                 self.__calculate_converted_value(channel)
 
-            except Exception:
-                print(f"PT100 could not take data from {channel.name} using {channel.raw_file}")
+            except Exception as error:
+                print(f"PT100 could not take data from {channel.name} using {channel.raw_file} \
+                      {type(error).__name__} - {error}")
                 continue
 
     def get_sensor_data(self):
