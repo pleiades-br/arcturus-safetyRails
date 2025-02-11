@@ -105,35 +105,35 @@ class Pt100(Sensor):
         and the raw_value as value
         """
         return {f'{channel.name}': channel.raw_value for channel in self.__channels}
-    
-    def __calculate_converted_value(self,channel: SensorData):
+
+    def __calculate_converted_value(self, channel: SensorData):
+        rlead_min = int(self.__pt100_config["rlead_min"])
+        rlead_max = int(self.__pt100_config["rlead_max"])
+        rtd_min = int(self.__pt100_config["rtd_min"])
+        rtd_max = int(self.__pt100_config["rtd_max"])
+        min_temp = int(self.__pt100_config["min_temp"])
+        max_temp = int(self.__pt100_config["max_temp"])
         rtd = self.__calculate_rtd(channel.raw_value)
-        v_min = self.__calculate_vin(self.__pt100_config["rlead_min"],
-                                     self.__pt100_config["rtd_min"])
-        v_max = self.__calculate_vin(self.__pt100_config["rlead_max"],
-                                     self.__pt100_config["rtd_max"])
-        
-        linear_const = self.__calculate_linear_interpolation_const(v_min,
-                                                                   self.__pt100_config["min_temp"],
-                                                                   v_max,
-                                                                   self.__pt100_config["max_temp"])
-        
-        v_in = self.__calculate_vin(
-            (self.__pt100_config["rlead_min"] + self.__pt100_config["rlead_max"]) / 2,
-             rtd)
-        temp_min = self.__pt100_config["min_temp"]
+        v_min = self.__calculate_vin(rlead_min, rtd_min)
+        v_max = self.__calculate_vin(rlead_max, rtd_max)
+
+        linear_const = self.__calculate_linear_interpolation_const(v_min, min_temp,
+                                                                   v_max, max_temp)
+
+        v_in = self.__calculate_vin((rlead_min + rlead_max)/2, rtd)
+
         print(f"**** PT100 Calculation ***** \
                 RTD = {rtd}; \n \
                 v_min = {v_min}; \n \
                 v_max = {v_max}; \n \
                 linear_const = {linear_const}; \n \
                 v_in = {v_in}; \n \
-                min_temp = {temp_min}\n")
-        channel.value = self.__pt100_config["min_temp"] + linear_const * (v_in - v_min)
+                min_temp = {min_temp}\n")
+        channel.value = min_temp + linear_const * (v_in - v_min)
 
 
-    def __calculate_linear_interpolation_const(self, min: float, temp_min: int,
-                                               max: float, temp_max: int):
+    def __calculate_linear_interpolation_const(self, min_value: int, temp_min: int,
+                                               max_value: int, temp_max: int) -> float:
         """
         Calculte the linear constant that could be different acording pt100 config
         Args:
@@ -142,9 +142,9 @@ class Pt100(Sensor):
             max (float): value (voltage or resistance) whean temperature reaches the maximun value
             temp_max (int): conifgured temperature maximun value in celsius
         """
-        return (temp_max - temp_min) / (max - min)
+        return (temp_max - temp_min) / (max_value - min_value)
     
-    def __calculate_vin(self, rlead: float , rtd: float):
+    def __calculate_vin(self, rlead: int , rtd: int) -> float:
         """
         Calculate the voltage when the temperature reaches the minimal
         V (MAX) = VREF + (Idac1 + Idac2) · Rlead + idac1 · (Rlead + Rrtd) 
@@ -158,7 +158,7 @@ class Pt100(Sensor):
         """
         return (2500 + rlead + 0.5 * (rlead + rtd))
 
-    def __calculate_rtd(self, raw_value: int):
+    def __calculate_rtd(self, raw_value: int) -> float:
         return ((2500 * raw_value)/ (2**22 * 8))
 
     def get_sensor_values_as_dict(self):
