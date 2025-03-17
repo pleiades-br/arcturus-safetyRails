@@ -114,26 +114,20 @@ class Pt100(Sensor):
         min_temp = int(self.__pt100_config["min_temp"])
         max_temp = int(self.__pt100_config["max_temp"])
         rtd = self.__calculate_rtd(channel.raw_value)
-        v_min = self.__calculate_vin(rlead_min, rtd_min)
-        v_max = self.__calculate_vin(rlead_max, rtd_max)
 
-        linear_const = self.__calculate_linear_interpolation_const(v_min, min_temp,
-                                                                   v_max, max_temp)
+        linear_const = self.__calculate_linear_interpolation_const(rtd_min, min_temp,
+                                                                   rtd_max, max_temp)
 
-        v_in = self.__calculate_vin((rlead_min + rlead_max)/2, rtd)
-
+        channel.value = min_temp + linear_const * (rtd - rtd_min)
         print(f"**** PT100 Calculation ***** \
                 RTD = {rtd}; \n \
-                v_min = {v_min}; \n \
-                v_max = {v_max}; \n \
                 linear_const = {linear_const}; \n \
-                v_in = {v_in}; \n \
-                min_temp = {min_temp}\n")
-        channel.value = min_temp + linear_const * (v_in - v_min)
+                min_temp = {min_temp}\n \
+                temp = {channel.value}")
 
 
-    def __calculate_linear_interpolation_const(self, min_value: int, temp_min: int,
-                                               max_value: int, temp_max: int) -> float:
+    def __calculate_linear_interpolation_const(self, rtd_min: int, min_temp: int,
+                                               rtd_max: int, max_temp: int) -> float:
         """
         Calculte the linear constant that could be different acording pt100 config
         Args:
@@ -142,7 +136,7 @@ class Pt100(Sensor):
             max (float): value (voltage or resistance) whean temperature reaches the maximun value
             temp_max (int): conifgured temperature maximun value in celsius
         """
-        return (temp_max - temp_min) / (max_value - min_value)
+        return (max_temp - min_temp) / (rtd_max - rtd_min)
     
     def __calculate_vin(self, rlead: int , rtd: int) -> float:
         """
