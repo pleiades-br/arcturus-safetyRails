@@ -51,8 +51,8 @@ class HWBoard():
                             [
                                 {
                                     'name': "temperature_bar_ch1",
-                                    'ch1': 1,
-                                    'ch2': 0,
+                                    'ch1': 0,
+                                    'ch2': 1,
                                 },
                             ], 
                             pt100_config)
