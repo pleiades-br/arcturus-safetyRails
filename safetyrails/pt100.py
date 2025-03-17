@@ -113,7 +113,7 @@ class Pt100(Sensor):
         rtd_max = int(self.__pt100_config["rtd_max"])
         min_temp = int(self.__pt100_config["min_temp"])
         max_temp = int(self.__pt100_config["max_temp"])
-        rtd = self.__calculate_rtd(channel.raw_value)
+        rtd = abs(self.__calculate_rtd(channel.raw_value))
 
         linear_const = self.__calculate_linear_interpolation_const(rtd_min, min_temp,
                                                                    rtd_max, max_temp)
@@ -153,7 +153,7 @@ class Pt100(Sensor):
         return (2500 + rlead + 0.5 * (rlead + rtd))
 
     def __calculate_rtd(self, raw_value: int) -> float:
-        return ((2500 * raw_value)/ (2**22 * 8))
+        return ((2500 * raw_value)/ ((2**22) * 16))
 
     def get_sensor_values_as_dict(self):
         """
